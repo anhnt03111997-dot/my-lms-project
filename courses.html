@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danh sách Khóa học — AMELA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+
+:root{
+  --black:#1A1A1A;
+  --black-2:#2A2A2A;
+  --white:#FFFFFF;
+  --yellow:#F5C518;
+  --gray:#F5F5F5;
+  --gray-border:#E2E2E2;
+  --text-muted:#9A9A9A;
+  --radius:14px;
+  --shadow:0 8px 30px rgba(0,0,0,.08);
+  --shadow-hover:0 18px 45px rgba(0,0,0,.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);
+  line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* ============ 1. NAVBAR ============ */
+.navbar{
+  background:var(--black);position:sticky;top:0;z-index:50;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;height:70px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo .logo-mascot{height:36px;width:auto;display:block}
+.logo .logo-wordmark{height:30px;width:auto;display:block}
+.nav-menu{display:flex;align-items:center;gap:26px;margin-left:8px}
+.nav-link{
+  color:#C9C9C9;text-decoration:none;font-size:15px;font-weight:500;
+  padding:6px 2px;position:relative;transition:color .2s ease;
+}
+.nav-link:hover{color:var(--white)}
+.nav-link.active{color:var(--yellow);font-weight:700}
+.nav-link.active::after{
+  content:"";position:absolute;left:0;right:0;bottom:-6px;height:3px;
+  background:var(--yellow);border-radius:3px;
+}
+.nav-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.avatar{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--yellow),#d9a800);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:var(--black);font-size:15px;
+}
+.greeting{color:var(--white);font-size:15px;font-weight:400}
+.greeting b{font-weight:700}
+.btn-logout{
+  background:transparent;border:1.5px solid var(--yellow);color:var(--yellow);
+  padding:8px 18px;border-radius:30px;font-family:inherit;font-size:14px;
+  font-weight:500;cursor:pointer;transition:all .2s ease;
+}
+.btn-logout:hover{background:var(--yellow);color:var(--black);transform:translateY(-2px)}
+
+/* ============ 2. HEADER TRANG ============ */
+.page-header{
+  background:linear-gradient(120deg,var(--black) 0%,var(--black-2) 100%);
+  padding:54px 0 60px;
+}
+.breadcrumb{font-size:14px;color:var(--text-muted);margin-bottom:16px}
+.breadcrumb a{color:var(--text-muted);text-decoration:none;transition:color .2s ease}
+.breadcrumb a:hover{color:var(--yellow)}
+.breadcrumb .sep{margin:0 8px;opacity:.7}
+.breadcrumb .here{color:var(--yellow)}
+.page-header h1{color:var(--white);font-size:clamp(32px,5vw,46px);font-weight:900;letter-spacing:-1px}
+.page-header p{color:#C9C9C9;font-size:17px;font-weight:300;margin-top:6px}
+
+/* ============ 3. TÌM KIẾM & BỘ LỌC ============ */
+.filter-section{background:var(--gray);padding:30px 0}
+.filter-bar{display:flex;gap:14px;align-items:stretch}
+.filter-search{
+  flex:4 1 0;min-width:0;display:flex;align-items:center;gap:8px;
+  background:#fff;border:1px solid var(--gray-border);border-radius:12px;padding:0 14px;
+  transition:box-shadow .2s ease,border-color .2s ease;
+}
+.filter-search:focus-within{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,197,24,.18)}
+.filter-search svg{width:22px;height:22px;flex-shrink:0}
+.filter-search input{
+  flex:1;min-width:0;border:none;outline:none;background:transparent;
+  font-family:inherit;font-size:15px;color:var(--black);padding:13px 0;
+}
+.filter-select{
+  flex:3 1 0;min-width:0;
+  border:1px solid var(--gray-border);border-radius:12px;background:#fff;
+  font-family:inherit;font-size:15px;color:var(--black);padding:13px 14px;cursor:pointer;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+.filter-select:focus{outline:none;border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,197,24,.18)}
+.result-count{margin-top:16px;font-size:15px;color:#555}
+.result-count b{color:var(--black);font-weight:700}
+
+/* ============ 4. GRID KHÓA HỌC ============ */
+.courses-section{padding:40px 0 64px;background:#fff}
+.course-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.course-card{
+  border:1px solid var(--gray-border);border-left:3px solid transparent;
+  border-radius:var(--radius);overflow:hidden;background:#fff;
+  display:flex;flex-direction:column;transition:all .2s ease;
+}
+.course-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-hover);border-left-color:var(--yellow)}
+.card-top{
+  position:relative;padding:22px 20px 20px;min-height:120px;
+  display:flex;align-items:flex-end;
+  background:linear-gradient(135deg,var(--black) 0%,#7a5e08 88%,var(--yellow) 130%);
+}
+.level-badge{
+  position:absolute;top:14px;right:14px;
+  font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;
+}
+.level-badge.basic{background:var(--yellow);color:var(--black)}
+.level-badge.advanced{background:var(--black);color:var(--yellow);border:1.5px solid var(--yellow)}
+.course-name{color:var(--white);font-size:20px;font-weight:700;line-height:1.25}
+.card-body{padding:20px;display:flex;flex-direction:column;flex:1}
+.group-badge{
+  align-self:flex-start;background:#FFF8DC;color:#B8860B;
+  font-size:12.5px;font-weight:700;padding:5px 13px;border-radius:20px;margin-bottom:16px;
+}
+.info-row{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.info{display:flex;align-items:center;gap:9px;font-size:14px;color:#666}
+.info svg{width:18px;height:18px;flex-shrink:0}
+.divider{height:1px;background:var(--gray-border);margin-bottom:16px}
+.btn-detail{
+  margin-top:auto;border:none;background:var(--yellow);color:var(--black);
+  font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;
+  padding:12px;border-radius:6px;transition:all .2s ease;
+}
+.btn-detail:hover{background:#e3b500;transform:translateY(-2px);box-shadow:0 8px 18px rgba(245,197,24,.4)}
+
+/* ============ 5. KHÔNG CÓ KẾT QUẢ ============ */
+.empty-state{text-align:center;padding:60px 20px}
+.empty-state svg{width:72px;height:72px;margin-bottom:18px}
+.empty-state h3{font-size:22px;font-weight:700;margin-bottom:6px}
+.empty-state p{color:var(--text-muted);font-size:15px;margin-bottom:22px}
+.btn-clear{
+  background:transparent;border:1.5px solid var(--yellow);color:var(--yellow);
+  font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;
+  padding:11px 26px;border-radius:30px;transition:all .2s ease;
+}
+.btn-clear:hover{background:var(--yellow);color:var(--black);transform:translateY(-2px)}
+.empty-state[hidden]{display:none}
+
+/* ============ 6. FOOTER ============ */
+.footer{background:var(--black);text-align:center;padding:40px 0}
+.footer .brand{color:var(--white);font-weight:700;font-size:17px}
+.footer .sub{color:var(--text-muted);font-size:13px;margin-top:6px}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:980px){
+  .course-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:760px){
+  .nav-inner{flex-wrap:wrap;height:auto;padding:12px 0;gap:12px}
+  .nav-menu{order:3;width:100%;justify-content:center;margin:0;gap:30px}
+  .nav-link.active::after{bottom:-4px}
+  .greeting{display:none}
+  .nav-right{margin-left:0}
+  .filter-bar{flex-direction:column}
+  .filter-search,.filter-select{flex:1 1 auto;width:100%}
+}
+@media(max-width:600px){
+  .course-grid{grid-template-columns:1fr}
+  .container{padding:0 16px}
+  .page-header{padding:40px 0 46px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. NAVBAR ============ -->
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <img src="mascot.png" alt="Mascot AMELA" class="logo-mascot">
+      <img src="logo.png" alt="AMELA — TEK FOR HUMAN" class="logo-wordmark">
+    </a>
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link">Trang chủ</a>
+      <a href="courses.html" class="nav-link active">Khóa học</a>
+    </div>
+    <div class="nav-right">
+      <div class="avatar">NV</div>
+      <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
+      <button class="btn-logout">Đăng xuất</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ 2. HEADER TRANG ============ -->
+<header class="page-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html">Trang chủ</a><span class="sep">&rsaquo;</span><span class="here">Khóa học</span>
+    </div>
+    <h1>Danh sách Khóa học</h1>
+    <p>Tìm kiếm khóa học theo tên</p>
+  </div>
+</header>
+
+<!-- ============ 3. TÌM KIẾM & BỘ LỌC ============ -->
+<section class="filter-section">
+  <div class="container">
+    <div class="filter-bar">
+      <!-- Ô tìm kiếm (40%) -->
+      <div class="filter-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#F5C518" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></g></svg>
+        <input type="text" id="searchInput" placeholder="Tìm kiếm khóa học theo tên" autocomplete="off">
+      </div>
+      <!-- Lọc nhóm năng lực (30%) -->
+      <select class="filter-select" id="groupFilter" aria-label="Lọc theo nhóm năng lực">
+        <option value="">Tất cả nhóm năng lực</option>
+        <option value="cot-loi">Năng lực cốt lõi</option>
+        <option value="chuyen-mon">Năng lực chuyên môn</option>
+        <option value="lanh-dao">Năng lực lãnh đạo</option>
+      </select>
+      <!-- Lọc vị trí (30%) -->
+      <select class="filter-select" id="posFilter" aria-label="Lọc theo vị trí">
+        <option value="">Tất cả vị trí</option>
+        <option value="Toàn bộ nhân viên">Toàn bộ nhân viên</option>
+        <option value="BrSE">BrSE</option>
+        <option value="Project Manager">Project Manager</option>
+        <option value="Comtor">Comtor</option>
+        <option value="BA">BA</option>
+        <option value="Tester">Tester</option>
+        <option value="Developer">Developer</option>
+        <option value="L&D">L&amp;D</option>
+        <option value="TA">TA</option>
+        <option value="Admin">Admin</option>
+        <option value="CnB">CnB</option>
+        <option value="IT">IT</option>
+        <option value="Accountant">Accountant</option>
+      </select>
+    </div>
+    <p class="result-count" id="resultCount">Hiển thị <b>5</b>/5 khóa học</p>
+  </div>
+</section>
+
+<!-- ============ 4. DANH SÁCH KHÓA HỌC ============ -->
+<section class="courses-section">
+  <div class="container">
+    <div class="course-grid" id="courseGrid"><!-- card render bằng JS --></div>
+
+    <!-- 5. Trạng thái không có kết quả -->
+    <div class="empty-state" id="emptyState" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#F5C518" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></g></svg>
+      <h3>Không tìm thấy khóa học phù hợp</h3>
+      <p>Thử thay đổi từ khóa hoặc bộ lọc</p>
+      <button class="btn-clear" id="clearBtn">Xóa bộ lọc</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="brand">AMELA Technology © 2026</div>
+    <div class="sub">Hệ thống LMS Nội bộ — Bảo mật</div>
+  </div>
+</footer>
+
+<script>
+/* ====== DỮ LIỆU 5 KHÓA HỌC (hardcode — cập nhật tại đây khi có dữ liệu thật) ======
+   - group     : tên hiển thị trên badge
+   - groupKey  : khóa để lọc theo nhóm năng lực (cot-loi | chuyen-mon | lanh-dao)
+   - positions : danh sách vị trí (vừa hiển thị, vừa dùng để lọc)
+   - general   : true nếu khóa dành cho mọi vị trí -> luôn khớp mọi filter vị trí
+   - duration  : thời lượng | level: "Cơ bản" hoặc "Nâng cao"
+*/
+const COURSES = [
+  {name:"Day One",                      group:"Năng lực cốt lõi",      groupKey:"cot-loi",     positions:["Toàn bộ nhân viên mới"],     general:true,  duration:"0.5 giờ", level:"Cơ bản"},
+  {name:"A-CORE",                       group:"Năng lực cốt lõi AMELA", groupKey:"cot-loi",     positions:["Toàn bộ nhân viên"],         general:true,  duration:"2 giờ",   level:"Cơ bản"},
+  {name:"Quản lý dự án bằng công cụ",   group:"Kỹ năng chuyên môn",    groupKey:"chuyen-mon",  positions:["BrSE","Project Manager"],    general:false, duration:"2 giờ",   level:"Cơ bản"},
+  {name:"Kỹ năng dịch thuật IT",        group:"Năng lực chuyên môn",   groupKey:"chuyen-mon",  positions:["BrSE","Comtor"],             general:false, duration:"2 giờ",   level:"Cơ bản"},
+  {name:"Kỹ năng viết meeting minute",  group:"Năng lực chuyên môn",   groupKey:"chuyen-mon",  positions:["BrSE","BA","Project Manager"], general:false, duration:"2 giờ", level:"Cơ bản"}
+];
+
+// Icon SVG dùng trong card
+var ICON_PERSON = '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19a6.5 6.5 0 0 1 13 0"/></g></svg>';
+var ICON_CLOCK  = '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.6V12l3 1.9"/></g></svg>';
+
+var grid        = document.getElementById('courseGrid');
+var searchInput = document.getElementById('searchInput');
+var groupFilter = document.getElementById('groupFilter');
+var posFilter   = document.getElementById('posFilter');
+var resultCount = document.getElementById('resultCount');
+var emptyState  = document.getElementById('emptyState');
+var clearBtn    = document.getElementById('clearBtn');
+
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+// Render toàn bộ card 1 lần, sau đó chỉ ẩn/hiện khi lọc
+function renderCards(){
+  grid.innerHTML = COURSES.map(function(c){
+    var lv = c.level === 'Nâng cao' ? 'advanced' : 'basic';
+    return ''
+      + '<article class="course-card">'
+      +   '<div class="card-top">'
+      +     '<span class="level-badge '+lv+'">'+esc(c.level)+'</span>'
+      +     '<h3 class="course-name">'+esc(c.name)+'</h3>'
+      +   '</div>'
+      +   '<div class="card-body">'
+      +     '<span class="group-badge">'+esc(c.group)+'</span>'
+      +     '<div class="info-row">'
+      +       '<span class="info">'+ICON_PERSON+'<span>'+esc(c.positions.join(', '))+'</span></span>'
+      +       '<span class="info">'+ICON_CLOCK +'<span>'+esc(c.duration)+'</span></span>'
+      +     '</div>'
+      +     '<div class="divider"></div>'
+      +     '<button class="btn-detail">Xem chi tiết →</button>'
+      +   '</div>'
+      + '</article>';
+  }).join('');
+}
+
+function norm(s){return (s||'').toLowerCase().trim();}
+
+function applyFilters(){
+  var q = norm(searchInput.value);
+  var g = groupFilter.value;
+  var p = posFilter.value;
+  var cards = grid.children;
+  var shown = 0;
+  for(var i=0;i<COURSES.length;i++){
+    var c = COURSES[i];
+    var matchText  = !q || norm(c.name).indexOf(q) > -1;             // tìm theo TÊN
+    var matchGroup = !g || c.groupKey === g;                        // theo nhóm năng lực
+    var matchPos   = !p || c.general || c.positions.indexOf(p) > -1; // theo vị trí (khóa "general" luôn khớp)
+    var ok = matchText && matchGroup && matchPos;
+    cards[i].style.display = ok ? '' : 'none';
+    if(ok) shown++;
+  }
+  resultCount.innerHTML = 'Hiển thị <b>'+shown+'</b>/'+COURSES.length+' khóa học';
+  emptyState.hidden = (shown !== 0);
+}
+
+function clearFilters(){
+  searchInput.value = '';
+  groupFilter.value = '';
+  posFilter.value = '';
+  applyFilters();
+  searchInput.focus();
+}
+
+renderCards();
+applyFilters();
+searchInput.addEventListener('input', applyFilters);   // real-time, không cần Enter
+groupFilter.addEventListener('change', applyFilters);
+posFilter.addEventListener('change', applyFilters);
+clearBtn.addEventListener('click', clearFilters);
+
+// Demo nút đăng xuất
+document.querySelector('.btn-logout').addEventListener('click', function(){
+  alert('Đăng xuất thành công!'); // TODO: thay bằng logic đăng xuất thật
+});
+</script>
+
+<!-- Để kết nối: trong index.html, tìm nút "Khám phá khóa học" và đổi href thành "courses.html" -->
+</body>
+</html>

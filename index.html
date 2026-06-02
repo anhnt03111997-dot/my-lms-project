@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LMS Nội Bộ — AMELA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+
+:root{
+  --black:#1A1A1A;
+  --black-2:#2A2A2A;
+  --white:#FFFFFF;
+  --yellow:#F5C518;
+  --gray:#F5F5F5;
+  --gray-border:#E2E2E2;
+  --text-muted:#9A9A9A;
+  --blue:#2D7FF9;
+  --orange:#F5821F;
+  --status-gray:#8A8A8A;
+  --radius:14px;
+  --shadow:0 8px 30px rgba(0,0,0,.08);
+  --shadow-hover:0 18px 45px rgba(0,0,0,.16);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Roboto',sans-serif;
+  background:var(--white);
+  color:var(--black);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+section{padding:64px 0}
+.section-head{margin-bottom:36px}
+.section-head h2{font-size:clamp(23px,3.4vw,30px);font-weight:900;letter-spacing:-.5px}
+.section-head p{color:var(--text-muted);font-size:16px;margin-top:4px}
+
+/* ============ 1. NAVBAR ============ */
+.navbar{
+  background:var(--black);
+  position:sticky;top:0;z-index:50;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.nav-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  height:70px;
+}
+.logo{
+  color:var(--yellow);
+  font-weight:900;font-size:22px;letter-spacing:-.5px;
+  display:flex;align-items:center;gap:10px;
+}
+.logo img{width:auto;display:block}
+.logo .logo-mascot{height:36px}
+.logo .logo-wordmark{height:30px}
+.nav-right{display:flex;align-items:center;gap:16px}
+.avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--yellow),#d9a800);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:var(--black);font-size:15px;
+  flex-shrink:0;
+}
+.greeting{color:var(--white);font-size:15px;font-weight:400}
+.greeting b{font-weight:700}
+.btn-logout{
+  background:transparent;
+  border:1.5px solid var(--yellow);
+  color:var(--yellow);
+  padding:8px 18px;border-radius:30px;
+  font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;
+  transition:all .25s ease;
+}
+.btn-logout:hover{background:var(--yellow);color:var(--black);transform:translateY(-2px)}
+
+/* ============ 2. HERO ============ */
+.hero{
+  background:linear-gradient(120deg,var(--black) 0%,var(--black-2) 100%);
+  position:relative;overflow:hidden;
+}
+/* --- Nền sao lấp lánh --- */
+.starfield{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.starfield i{
+  position:absolute;border-radius:50%;background:#fff;
+  box-shadow:0 0 6px rgba(255,255,255,.6);
+  animation:twinkle ease-in-out infinite;
+}
+@keyframes twinkle{0%,100%{opacity:.12;transform:scale(.7)}50%{opacity:.95;transform:scale(1)}}
+
+@media(prefers-reduced-motion:reduce){
+  .starfield i{animation:none}
+}
+.hero-inner{
+  display:flex;align-items:center;justify-content:space-between;gap:40px;
+  padding:70px 0;position:relative;z-index:2;
+}
+.hero-text{max-width:700px}
+.hero-tag{
+  color:var(--yellow);font-weight:500;font-size:16px;
+  margin-bottom:14px;display:inline-flex;align-items:center;gap:8px;
+}
+.hero-logo{height:42px;width:auto;display:block;margin-bottom:20px}
+.hero-welcome{
+  --amela:clamp(46px,8vw,80px);
+  display:flex;flex-direction:column;gap:8px;
+  color:var(--white);letter-spacing:-.5px;margin-bottom:32px;
+}
+.hero-welcome .hw-main{
+  font-size:var(--amela);color:var(--yellow);
+  font-weight:900;line-height:1;letter-spacing:-1.5px;
+}
+.hero-welcome .hw-sub{
+  font-size:calc(var(--amela) / 2);
+  font-weight:600;line-height:1.3;
+}
+.hero-welcome .hw-sub3{
+  font-size:calc(var(--amela) / 4);
+  font-weight:600;line-height:1.55;font-style:italic;
+  letter-spacing:.4px;word-spacing:3px;
+}
+.hero-tag svg{width:22px;height:22px;display:block;animation:wave 2.4s ease-in-out infinite;transform-origin:70% 80%}
+@keyframes wave{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(14deg)}25%{transform:rotate(-8deg)}40%{transform:rotate(14deg)}}
+.hero-text h1{
+  color:var(--white);
+  font-size:clamp(40px,7vw,64px);font-weight:900;line-height:1.05;letter-spacing:-1.5px;
+  margin-bottom:16px;
+}
+.hero-text .desc{
+  color:#C9C9C9;font-size:clamp(15px,2.2vw,18px);font-weight:300;margin-bottom:30px;
+}
+.btn-primary{
+  background:var(--yellow);color:var(--black);
+  border:none;padding:15px 30px;border-radius:40px;
+  font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;
+  transition:all .25s ease;
+  box-shadow:0 8px 24px rgba(245,197,24,.35);
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(245,197,24,.5)}
+.hero-mascot{flex-shrink:0}
+.hero-mascot img{
+  height:180px;width:auto;display:block;
+  filter:drop-shadow(0 16px 30px rgba(0,0,0,.4));
+  animation:float 4s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+/* ============ THANH TÌM KIẾM ============ */
+.search-section{background:var(--gray);padding:42px 0 4px}
+.search-bar{
+  display:flex;gap:10px;align-items:center;
+  background:#fff;border:1px solid var(--gray-border);
+  border-radius:16px;padding:10px;box-shadow:var(--shadow);
+  max-width:880px;margin:0 auto;
+}
+.search-field{flex:1;display:flex;align-items:center;min-width:0}
+.search-ico{display:flex;align-items:center;padding:0 4px 0 10px}
+.search-ico svg{width:22px;height:22px;display:block}
+.search-input{
+  flex:1;min-width:0;border:none;outline:none;background:transparent;
+  font-family:inherit;font-size:15px;color:var(--black);padding:10px 8px;
+}
+.search-select{
+  border:none;outline:none;cursor:pointer;
+  font-family:inherit;font-size:14px;color:var(--black);
+  background:var(--gray);border-radius:10px;padding:11px 12px;
+}
+.search-btn{
+  border:none;background:var(--yellow);color:var(--black);cursor:pointer;
+  font-family:inherit;font-weight:700;font-size:15px;
+  padding:12px 24px;border-radius:10px;white-space:nowrap;transition:all .25s ease;
+}
+.search-btn:hover{background:#e3b500;transform:translateY(-1px)}
+.search-empty{text-align:center;color:var(--text-muted);font-size:14px;margin-top:14px}
+
+/* ============ 3. KHÓA HỌC CỦA TÔI ============ */
+.bg-gray{background:var(--gray)}
+.course-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+}
+.course-card{
+  background:var(--white);border-radius:var(--radius);
+  border:1px solid var(--gray-border);
+  padding:24px;display:flex;flex-direction:column;
+  transition:all .3s ease;
+}
+.course-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-hover)}
+.dept-badge{
+  align-self:flex-start;
+  background:var(--yellow);color:var(--black);
+  font-size:12px;font-weight:700;
+  padding:4px 12px;border-radius:20px;margin-bottom:14px;
+}
+.course-card h3{font-size:19px;font-weight:700;margin-bottom:auto;min-height:52px}
+.status{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;font-weight:500;padding:5px 12px;border-radius:20px;
+  align-self:flex-start;margin:14px 0 10px;
+}
+.status::before{content:"";width:8px;height:8px;border-radius:50%}
+.status.learning{background:rgba(45,127,249,.12);color:var(--blue)}
+.status.learning::before{background:var(--blue)}
+.status.waiting{background:rgba(245,130,31,.14);color:var(--orange)}
+.status.waiting::before{background:var(--orange)}
+.status.notstarted{background:rgba(138,138,138,.15);color:var(--status-gray)}
+.status.notstarted::before{background:var(--status-gray)}
+
+.progress-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:6px}
+.progress-row b{color:var(--black);font-weight:700}
+.progress-track{
+  height:9px;background:var(--gray);border-radius:10px;overflow:hidden;margin-bottom:20px;
+}
+.progress-fill{
+  height:100%;background:var(--yellow);border-radius:10px;
+  width:0;transition:width 1.4s cubic-bezier(.22,1,.36,1);
+}
+.btn-action{
+  border:none;padding:12px;border-radius:10px;
+  font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
+  transition:all .25s ease;width:100%;
+}
+.btn-action.yellow{background:var(--yellow);color:var(--black)}
+.btn-action.yellow:hover{background:#e3b500;transform:translateY(-2px)}
+.btn-action.orange{background:var(--orange);color:var(--white)}
+.btn-action.orange:hover{background:#e0700f;transform:translateY(-2px)}
+
+/* ============ 4. DANH MỤC ============ */
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.cat-card{
+  background:var(--white);border:1px solid var(--gray-border);
+  border-radius:var(--radius);padding:28px 22px;
+  transition:all .3s ease;cursor:pointer;
+}
+.cat-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-hover);border-color:var(--yellow)}
+.cat-icon{margin-bottom:14px;line-height:0}
+.cat-icon svg{width:56px;height:56px;display:block}
+.cat-card:hover .cat-icon svg{transform:rotate(-4deg) scale(1.05);transition:transform .3s ease}
+.cat-card h3{font-size:17px;font-weight:700;margin-bottom:8px;line-height:1.35}
+.cat-count{color:var(--text-muted);font-size:14px;font-weight:500}
+.cat-count b{color:var(--yellow);font-weight:900}
+
+/* ============ 5. HÌNH ẢNH & PHẢN HỒI ============ */
+.media-grid{display:flex;flex-direction:column;gap:36px}
+.scroller{position:relative}
+.scroll-arrow{
+  position:absolute;top:50%;right:0;transform:translateY(-50%);
+  background:none;border:none;padding:6px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;z-index:6;
+  transition:transform .2s ease;
+}
+.scroll-arrow:hover{transform:translateY(-50%) scale(1.18)}
+.scroll-arrow svg{width:34px;height:34px;display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.scroll-arrow svg path{stroke:var(--yellow)}
+.scroll-arrow[hidden]{display:none}
+
+.gallery{display:flex;gap:12px;overflow-x:auto;padding:4px 4px 12px;scroll-behavior:smooth;scroll-snap-type:x mandatory}
+.gallery .photo{
+  flex:0 0 200px;aspect-ratio:1/1;border-radius:12px;scroll-snap-align:start;
+  background:linear-gradient(135deg,var(--black) 0%,var(--yellow) 130%);
+  display:flex;align-items:flex-end;padding:10px;
+  transition:transform .3s ease;
+}
+.gallery .photo:hover{transform:scale(1.04)}
+.gallery .photo span{
+  color:var(--white);font-size:11px;font-weight:500;opacity:.85;
+}
+.gallery-caption{color:var(--text-muted);font-size:14px;font-style:italic;margin-top:4px}
+
+.reviews{display:flex;gap:18px;overflow-x:auto;padding:4px 4px 12px;scroll-behavior:smooth;scroll-snap-type:x mandatory}
+.review-card{
+  flex:0 0 300px;scroll-snap-align:start;
+  background:var(--white);border:1px solid var(--gray-border);
+  border-radius:var(--radius);padding:22px;transition:all .3s ease;
+}
+.gallery::-webkit-scrollbar,.reviews::-webkit-scrollbar{height:8px}
+.gallery::-webkit-scrollbar-thumb,.reviews::-webkit-scrollbar-thumb{background:#d8d8d8;border-radius:8px}
+.gallery::-webkit-scrollbar-track,.reviews::-webkit-scrollbar-track{background:transparent}
+.review-card:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
+.review-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.review-head .avatar{width:46px;height:46px;font-size:17px}
+.review-name{font-weight:700;font-size:15px}
+.review-dept{color:var(--text-muted);font-size:13px}
+.review-quote{font-size:15px;color:#444;font-style:italic;margin-bottom:10px}
+.rating{display:flex;gap:3px}
+.rating svg{width:18px;height:18px;display:block}
+
+/* ============ 6. FOOTER ============ */
+.footer{background:var(--black);text-align:center;padding:40px 0}
+.footer .brand{color:var(--white);font-weight:700;font-size:17px}
+.footer .sub{color:var(--text-muted);font-size:13px;margin-top:6px}
+
+/* ============ RESPONSIVE ============ */
+/* ===== RESPONSIVE ===== */
+@media(max-width:1024px){
+  .container{padding:0 20px}
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:900px){
+  .course-grid{grid-template-columns:repeat(2,1fr)}
+  .media-grid{grid-template-columns:1fr}
+  .hero-inner{gap:28px}
+}
+@media(max-width:680px){
+  section{padding:44px 0}
+  .container{padding:0 18px}
+  .hero-inner{flex-direction:column-reverse;text-align:center;padding:48px 0;gap:24px}
+  .hero-text{max-width:100%}
+  .hero-tag{justify-content:center}
+  .hero-logo{margin-left:auto;margin-right:auto}
+  .hero-mascot img{height:140px}
+  .btn-primary{width:100%}
+  .search-bar{flex-wrap:wrap}
+  .search-field{flex:1 1 100%}
+  .search-select{flex:1 1 auto}
+  .search-btn{flex:1 1 auto}
+  .course-grid,.cat-grid{grid-template-columns:1fr}
+  .nav-inner{height:60px}
+  .logo{font-size:18px;gap:8px}
+  .logo .logo-mascot{height:30px}
+  .logo .logo-wordmark{height:26px}
+  .greeting{display:none}
+  .nav-right{gap:10px}
+}
+@media(max-width:400px){
+  .container{padding:0 14px}
+  .logo{gap:6px}
+  .logo .logo-mascot{height:26px}
+  .logo .logo-wordmark{height:22px}
+  .btn-logout{padding:7px 14px;font-size:13px}
+  .avatar{width:34px;height:34px;font-size:13px}
+  .gallery{gap:8px}
+  .review-quote{font-size:14px}
+  .cat-icon svg{width:48px;height:48px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. NAVBAR ============ -->
+<nav class="navbar">
+  <div class="container nav-inner">
+    <div class="logo"><img src="mascot.png" alt="Mascot AMELA" class="logo-mascot"><img src="logo.png" alt="AMELA — TEK FOR HUMAN" class="logo-wordmark"></div>
+    <div class="nav-right">
+      <div class="avatar">NV</div>
+      <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
+      <button class="btn-logout">Đăng xuất</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ 2. HERO ============ -->
+<header class="hero">
+  <div class="starfield" id="stars"></div>
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <h1 class="hero-welcome">
+        <span class="hw-sub">Chào mừng đến Tổ chức học tập</span>
+        <span class="hw-main">AMELA</span>
+        <span class="hw-sub3">Nơi mỗi thành viên trở thành phiên bản tốt hơn mỗi ngày</span>
+      </h1>
+      <button class="btn-primary" onclick="window.location.href='courses.html'">Khám phá khóa học →</button>
+    </div>
+    <div class="hero-mascot">
+      <img src="mascot.png" alt="Mascot">
+    </div>
+  </div>
+</header>
+
+<!-- ============ THANH TÌM KIẾM ============ -->
+<section class="search-section">
+  <div class="container">
+    <div class="search-bar">
+      <div class="search-field">
+        <span class="search-ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#1A1A1A" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></g></svg>
+        </span>
+        <input type="text" id="courseSearch" class="search-input" placeholder="Tìm khóa học theo tên...">
+      </div>
+      <select id="groupFilter" class="search-select" aria-label="Lọc theo nhóm năng lực">
+        <option value="">Tất cả nhóm năng lực</option>
+        <option value="cot-loi">Năng lực cốt lõi</option>
+        <option value="chuyen-mon">Năng lực chuyên môn</option>
+        <option value="lanh-dao">Năng lực lãnh đạo</option>
+        <option value="ky-nang-mem">Kỹ năng mềm</option>
+      </select>
+      <button class="search-btn" id="searchBtn">Tìm kiếm</button>
+    </div>
+    <p class="search-empty" id="searchEmpty" hidden>Không tìm thấy khóa học phù hợp.</p>
+  </div>
+</section>
+
+<!-- ============ 3. KHÓA HỌC CỦA TÔI ============ -->
+<section class="bg-gray">
+  <div class="container">
+    <div class="section-head">
+      <h2>Khóa học của tôi</h2>
+      <p>Tiếp tục từ nơi bạn đã dừng</p>
+    </div>
+    <div class="course-grid">
+
+      <!-- Card 1 -->
+      <div class="course-card" data-group="ky-nang-mem">
+        <span class="dept-badge">Phòng Kỹ thuật</span>
+        <h3>Kỹ năng giao tiếp trong công việc</h3>
+        <span class="status learning">Đang học</span>
+        <div class="progress-row"><span>Tiến độ</span><b>60%</b></div>
+        <div class="progress-track"><div class="progress-fill" data-progress="60"></div></div>
+        <button class="btn-action yellow">Tiếp tục học</button>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="course-card" data-group="cot-loi">
+        <span class="dept-badge">Phòng Nhân sự</span>
+        <h3>Quy trình onboarding nhân viên mới</h3>
+        <span class="status waiting">Chờ thi</span>
+        <div class="progress-row"><span>Tiến độ</span><b>100%</b></div>
+        <div class="progress-track"><div class="progress-fill" data-progress="100"></div></div>
+        <button class="btn-action orange">Làm bài kiểm tra</button>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="course-card" data-group="chuyen-mon">
+        <span class="dept-badge">Phòng Kinh doanh</span>
+        <h3>Kỹ năng đàm phán &amp; chốt deal</h3>
+        <span class="status notstarted">Chưa bắt đầu</span>
+        <div class="progress-row"><span>Tiến độ</span><b>0%</b></div>
+        <div class="progress-track"><div class="progress-fill" data-progress="0"></div></div>
+        <button class="btn-action yellow">Bắt đầu ngay</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. DANH MỤC KHÓA HỌC ============ -->
+<section>
+  <div class="container">
+    <div class="section-head">
+      <h2>Khám phá Khóa học</h2>
+      <p>Lựa chọn lộ trình theo nhóm năng lực</p>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card">
+        <div class="cat-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M24 22v-4a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v4" fill="none"/>
+              <rect x="8" y="22" width="48" height="30" rx="6" fill="#F5C518"/>
+              <rect x="8" y="32" width="48" height="7" fill="#fff"/>
+              <rect x="28" y="33" width="8" height="5" rx="2" fill="#1A1A1A" stroke="none"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Phát triển năng lực cốt lõi</h3>
+        <p class="cat-count"><b>8</b> khóa học</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="10" y="10" width="44" height="44" rx="8" fill="#fff"/>
+              <rect x="17" y="34" width="8" height="12" rx="2" fill="#F5C518"/>
+              <rect x="28" y="26" width="8" height="20" rx="2" fill="#F5C518"/>
+              <rect x="39" y="18" width="8" height="28" rx="2" fill="#F5C518"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Phát triển năng lực chuyên môn</h3>
+        <p class="cat-count"><b>6</b> khóa học</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="16" cy="27" r="6" fill="#fff"/>
+              <path d="M6 51v-3a10 10 0 0 1 20 0v3" fill="#fff"/>
+              <circle cx="48" cy="27" r="6" fill="#fff"/>
+              <path d="M38 51v-3a10 10 0 0 1 20 0v3" fill="#fff"/>
+              <circle cx="32" cy="25" r="8" fill="#F5C518"/>
+              <path d="M19 53v-4a13 13 0 0 1 26 0v4" fill="#F5C518"/>
+              <path d="M32 5l2.2 4.6 5 .5-3.8 3.4 1.1 4.9L32 15.9l-4.5 2.5 1.1-4.9-3.8-3.4 5-.5z" fill="#F5C518"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Phát triển năng lực lãnh đạo</h3>
+        <p class="cat-count"><b>5</b> khóa học</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="32" cy="32" r="22" fill="#fff"/>
+              <circle cx="32" cy="32" r="14" fill="#F5C518"/>
+              <circle cx="32" cy="32" r="6" fill="#fff"/>
+              <circle cx="32" cy="32" r="2" fill="#1A1A1A" stroke="none"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Phát triển kỹ năng mềm</h3>
+        <p class="cat-count"><b>4</b> khóa học</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. HÌNH ẢNH & PHẢN HỒI ============ -->
+<section class="bg-gray">
+  <div class="container">
+    <div class="section-head">
+      <h2>Hình ảnh &amp; Phản hồi</h2>
+      <p>Khoảnh khắc học tập và chia sẻ từ học viên</p>
+    </div>
+    <div class="media-grid">
+
+      <!-- Dòng ảnh khóa học (cuộn ngang) -->
+      <div>
+        <div class="scroller">
+          <div class="gallery" id="galleryTrack">
+            <div class="photo"><span>Onboarding</span></div>
+            <div class="photo"><span>Workshop kỹ năng</span></div>
+            <div class="photo"><span>Teamwork</span></div>
+            <div class="photo"><span>Hội thảo Q2</span></div>
+            <div class="photo"><span>Vinh danh học viên</span></div>
+            <div class="photo"><span>Team building</span></div>
+            <div class="photo"><span>Lễ trao chứng chỉ</span></div>
+            <div class="photo"><span>Đào tạo nội bộ</span></div>
+          </div>
+          <button class="scroll-arrow" data-target="galleryTrack" aria-label="Xem thêm ảnh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Dòng phản hồi (cuộn ngang) -->
+      <div>
+        <div class="scroller">
+          <div class="reviews" id="reviewTrack">
+        <div class="review-card">
+          <div class="review-head">
+            <div class="avatar">An</div>
+            <div>
+              <div class="review-name">Nguyễn Văn An</div>
+              <div class="review-dept">Phòng Kỹ thuật</div>
+            </div>
+          </div>
+          <p class="review-quote">"Khóa học rất thực tế, áp dụng được ngay vào công việc hằng ngày."</p>
+          <div class="rating"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="review-card">
+          <div class="review-head">
+            <div class="avatar">Hà</div>
+            <div>
+              <div class="review-name">Trần Thu Hà</div>
+              <div class="review-dept">Phòng Nhân sự</div>
+            </div>
+          </div>
+          <p class="review-quote">"Giao diện dễ dùng, lộ trình rõ ràng. Mình học hết khóa lúc nào không hay!"</p>
+          <div class="rating"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="review-card">
+          <div class="review-head">
+            <div class="avatar">Q</div>
+            <div>
+              <div class="review-name">Lê Minh Quân</div>
+              <div class="review-dept">Phòng Kinh doanh</div>
+            </div>
+          </div>
+          <p class="review-quote">"Nội dung cô đọng, ví dụ sát thực tế bán hàng. Rất đáng thời gian bỏ ra."</p>
+          <div class="rating"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="review-card">
+          <div class="review-head">
+            <div class="avatar">M</div>
+            <div>
+              <div class="review-name">Phạm Thị Mai</div>
+              <div class="review-dept">Phòng Marketing</div>
+            </div>
+          </div>
+          <p class="review-quote">"Học mọi lúc trên điện thoại tiện vô cùng, theo dõi tiến độ rõ ràng."</p>
+          <div class="rating"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="review-card">
+          <div class="review-head">
+            <div class="avatar">L</div>
+            <div>
+              <div class="review-name">Đỗ Hoàng Long</div>
+              <div class="review-dept">Phòng IT</div>
+            </div>
+          </div>
+          <p class="review-quote">"Hệ thống ổn định, video mượt. Mình thích nhất phần nhắc nhở hoàn thành khóa học."</p>
+          <div class="rating"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+        </div>
+          </div>
+          <button class="scroll-arrow" data-target="reviewTrack" aria-label="Xem thêm phản hồi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <div class="brand">AMELA © 2026</div>
+    <div class="sub">Hệ thống LMS Nội bộ — Bảo mật</div>
+  </div>
+</footer>
+
+<script>
+// Tạo nền sao lấp lánh cho Hero
+(function(){
+  var box = document.getElementById('stars');
+  if(!box) return;
+  var n = 80;
+  for(var i=0;i<n;i++){
+    var s = document.createElement('i');
+    var size = (Math.random()*2 + 1).toFixed(1);
+    s.style.width = s.style.height = size + 'px';
+    s.style.left = (Math.random()*100) + '%';
+    s.style.top = (Math.random()*100) + '%';
+    s.style.animationDuration = (1.8 + Math.random()*3.2).toFixed(2) + 's';
+    s.style.animationDelay = (Math.random()*4).toFixed(2) + 's';
+    if(Math.random() < 0.3){               // ~30% sao màu vàng nhấn
+      s.style.background = '#F5C518';
+      s.style.boxShadow = '0 0 6px rgba(245,197,24,.8)';
+    }
+    box.appendChild(s);
+  }
+})();
+
+// Animation progress bar khi trang load
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    document.querySelectorAll('.progress-fill').forEach(function(bar){
+      bar.style.width = bar.getAttribute('data-progress') + '%';
+    });
+  }, 250);
+});
+
+// Demo: nút đăng xuất
+document.querySelector('.btn-logout').addEventListener('click', function(){
+  alert('Đăng xuất thành công!'); // TODO: thay bằng logic đăng xuất thật
+});
+
+// Mũi tên cuộn ngang cho gallery & phản hồi
+document.querySelectorAll('.scroll-arrow').forEach(function(btn){
+  var track = document.getElementById(btn.getAttribute('data-target'));
+  if(!track) return;
+  function update(){
+    var atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+    btn.hidden = atEnd;                 // ẩn mũi tên khi đã cuộn hết
+  }
+  btn.addEventListener('click', function(){
+    track.scrollBy({left: Math.round(track.clientWidth * 0.8), behavior:'smooth'});
+  });
+  track.addEventListener('scroll', update);
+  window.addEventListener('resize', update);
+  setTimeout(update, 120);
+});
+
+// Tìm kiếm khóa học theo tên hoặc nhóm năng lực
+(function(){
+  var input = document.getElementById('courseSearch');
+  var sel   = document.getElementById('groupFilter');
+  var btn   = document.getElementById('searchBtn');
+  var empty = document.getElementById('searchEmpty');
+  if(!input) return;
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.course-card'));
+  function norm(s){return (s||'').toLowerCase();}
+  function run(){
+    var q = norm(input.value).trim();
+    var g = sel.value;
+    var shown = 0;
+    cards.forEach(function(c){
+      var h3 = c.querySelector('h3');
+      var badge = c.querySelector('.dept-badge');
+      var name = norm(h3 ? h3.textContent : '');
+      var dept = norm(badge ? badge.textContent : '');
+      var matchText  = !q || name.indexOf(q) > -1 || dept.indexOf(q) > -1;
+      var matchGroup = !g || c.getAttribute('data-group') === g;
+      var ok = matchText && matchGroup;
+      c.style.display = ok ? '' : 'none';
+      if(ok) shown++;
+    });
+    if(empty) empty.hidden = (shown !== 0);
+  }
+  input.addEventListener('input', run);
+  sel.addEventListener('change', run);
+  btn.addEventListener('click', run);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') run(); });
+})();
+</script>
+
+</body>
+</html>
