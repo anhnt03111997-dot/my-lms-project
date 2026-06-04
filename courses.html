@@ -176,6 +176,21 @@ body{
 </style>
 </head>
 <body>
+<script>
+(function(){
+  var user = localStorage.getItem('lms_user');
+  if(!user){ window.location.href = 'login.html'; return; }
+  try {
+    var u = JSON.parse(user);
+    document.addEventListener('DOMContentLoaded', function(){
+      var greet = document.querySelector('.greeting');
+      if(greet && u.name){ greet.innerHTML = 'Xin chào, <b>' + u.name + '</b>'; }
+      var av = document.querySelector('.avatar');
+      if(av && u.name){ av.textContent = u.name.charAt(0).toUpperCase(); }
+    });
+  } catch(e){}
+})();
+</script>
 
 <!-- ============ 1. NAVBAR ============ -->
 <nav class="navbar">
@@ -302,6 +317,9 @@ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp
 function renderCards(){
   grid.innerHTML = COURSES.map(function(c){
     var lv = c.level === 'Nâng cao' ? 'advanced' : 'basic';
+    var detail = c.name === 'Day One' ? 'course-detail.html?course=day-one'
+               : c.name === 'A-CORE'  ? 'course-detail.html?course=a-core'
+               : 'course-detail.html';
     return ''
       + '<article class="course-card">'
       +   '<div class="card-top">'
@@ -315,7 +333,7 @@ function renderCards(){
       +       '<span class="info">'+ICON_CLOCK +'<span>'+esc(c.duration)+'</span></span>'
       +     '</div>'
       +     '<div class="divider"></div>'
-      +     '<button class="btn-detail">Xem chi tiết →</button>'
+      +     '<button class="btn-detail" onclick="window.location.href=\'' + detail + '\'">Xem chi tiết →</button>'
       +   '</div>'
       + '</article>';
   }).join('');
@@ -357,9 +375,10 @@ groupFilter.addEventListener('change', applyFilters);
 posFilter.addEventListener('change', applyFilters);
 clearBtn.addEventListener('click', clearFilters);
 
-// Demo nút đăng xuất
+// Đăng xuất: xóa phiên và quay về trang đăng nhập
 document.querySelector('.btn-logout').addEventListener('click', function(){
-  alert('Đăng xuất thành công!'); // TODO: thay bằng logic đăng xuất thật
+  localStorage.removeItem('lms_user');
+  window.location.href = 'login.html';
 });
 </script>
 

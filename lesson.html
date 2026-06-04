@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Học bài — AMELA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+
+:root{
+  --black:#1A1A1A; --black-2:#2A2A2A; --white:#FFFFFF;
+  --yellow:#F5C518; --gray:#F5F5F5; --gray-border:#E2E2E2; --muted:#9A9A9A;
+  --green:#16A34A; --green-bg:#F0FDF4; --red:#DC2626; --red-bg:#FEF2F2;
+  --radius:14px; --shadow:0 8px 30px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);line-height:1.6;-webkit-font-smoothing:antialiased}
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* ===== NAVBAR ===== */
+.navbar{background:var(--black);position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;height:70px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo .logo-mascot{height:36px;width:auto;display:block}
+.logo .logo-wordmark{height:30px;width:auto;display:block}
+.nav-menu{display:flex;align-items:center;gap:26px;margin-left:8px}
+.nav-link{color:#C9C9C9;text-decoration:none;font-size:15px;font-weight:500;padding:6px 2px;position:relative;transition:color .2s ease}
+.nav-link:hover{color:var(--white)}
+.nav-link.active{color:var(--yellow);font-weight:700}
+.nav-link.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:3px;background:var(--yellow);border-radius:3px}
+.nav-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.avatar{width:38px;height:38px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--yellow),#d9a800);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--black);font-size:15px}
+.greeting{color:var(--white);font-size:15px;font-weight:400}
+.greeting b{font-weight:700}
+.btn-logout{background:transparent;border:1.5px solid var(--yellow);color:var(--yellow);padding:8px 18px;border-radius:30px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s ease}
+.btn-logout:hover{background:var(--yellow);color:var(--black);transform:translateY(-2px)}
+
+/* ===== LAYOUT ===== */
+.lesson-layout{display:grid;grid-template-columns:280px 1fr;align-items:start;max-width:1280px;margin:0 auto}
+
+/* ===== SIDEBAR ===== */
+.sidebar{position:sticky;top:70px;align-self:start;background:var(--gray);border-right:1px solid var(--gray-border);min-height:calc(100vh - 70px)}
+.sb-top{background:var(--black);padding:20px 18px}
+.sb-course{color:#fff;font-weight:700;font-size:16px;margin-bottom:14px}
+.sb-bar{height:8px;background:rgba(255,255,255,.15);border-radius:8px;overflow:hidden;margin-bottom:8px}
+.sb-bar-fill{height:100%;width:0;background:var(--yellow);border-radius:8px;transition:width 1.1s cubic-bezier(.22,1,.36,1)}
+.sb-progress-text{color:#C9C9C9;font-size:13px;margin-bottom:16px}
+.btn-back{width:100%;background:transparent;border:1.5px solid var(--yellow);color:var(--yellow);font-family:inherit;font-size:13px;font-weight:600;padding:9px;border-radius:8px;cursor:pointer;transition:all .2s ease}
+.btn-back:hover{background:var(--yellow);color:var(--black)}
+.sb-list{padding:10px}
+.sb-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:none;border-left:3px solid transparent;border-radius:8px;padding:11px 10px;cursor:pointer;font-family:inherit;transition:background .2s ease}
+.sb-item:hover{background:#ececec}
+.sb-item.current{background:#FFF8DC;border-left-color:var(--yellow)}
+.sb-item.locked{cursor:not-allowed}
+.sb-item.locked .sb-item-title{color:var(--muted)}
+.sb-ico{width:24px;height:24px;flex-shrink:0;display:flex}
+.sb-ico svg{width:24px;height:24px}
+.sb-item-body{flex:1;min-width:0}
+.sb-item-title{font-size:13.5px;font-weight:500;line-height:1.3}
+.sb-item-dur{font-size:12px;color:var(--muted)}
+
+/* dropdown chọn bài (mobile) */
+.mobile-select{display:none;padding:14px 16px;background:var(--gray);border-bottom:1px solid var(--gray-border)}
+.mobile-select select{width:100%;font-family:inherit;font-size:14px;padding:11px 12px;border:1px solid var(--gray-border);border-radius:10px;background:#fff}
+
+/* ===== KHU VỰC HỌC ===== */
+.learn{padding:30px 36px 60px;min-width:0}
+.crumb{font-size:13px;color:var(--muted);margin-bottom:12px}
+.crumb a{color:var(--muted);text-decoration:none}
+.crumb a:hover{color:#c9a200}
+.crumb .sep{margin:0 7px;opacity:.7}
+.crumb .here{color:var(--yellow);font-weight:500}
+.learn h1{font-size:26px;font-weight:900;letter-spacing:-.5px;line-height:1.2;margin-bottom:12px}
+.meta{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:26px;font-size:14px;color:#555}
+.meta .m{display:flex;align-items:center;gap:6px}
+.meta .m svg{width:18px;height:18px}
+.meta .badge{background:#FFF8DC;color:#B8860B;font-weight:700;font-size:12px;padding:4px 12px;border-radius:20px}
+
+/* ----- nội dung ----- */
+.video-wrap{position:relative;width:100%;padding-bottom:56.25%;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);background:#000}
+.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.content-pdf{width:100%;height:600px;border:1px solid var(--gray-border);border-radius:12px}
+.content-html{font-size:16px;line-height:1.8;max-width:720px}
+.content-html h2,.content-html h3{color:var(--yellow);margin:18px 0 8px}
+.content-html blockquote{border-left:4px solid var(--yellow);background:var(--gray);padding:12px 16px;border-radius:0 8px 8px 0;margin:14px 0;color:#444}
+.content-title{font-size:18px;font-weight:700;margin:18px 0 6px}
+.content-desc{color:#555;font-size:15px}
+.btn-yellow{background:var(--yellow);color:var(--black);border:none;font-family:inherit;font-weight:700;font-size:15px;padding:13px 24px;border-radius:10px;cursor:pointer;transition:all .2s ease}
+.btn-yellow:hover{background:#e3b500;transform:translateY(-2px);box-shadow:0 8px 18px rgba(245,197,24,.4)}
+.btn-outline{background:transparent;border:1.5px solid var(--gray-border);color:#333;font-family:inherit;font-weight:600;font-size:14px;padding:11px 18px;border-radius:10px;cursor:pointer;transition:all .2s ease}
+.btn-outline:hover{border-color:var(--yellow);color:#000}
+.ack-row{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap}
+
+/* ----- câu hỏi ----- */
+.quiz{display:none;background:#fff;border:2px solid var(--yellow);border-radius:16px;padding:28px;margin-top:24px}
+.quiz.show{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.quiz-badge{display:inline-block;background:var(--yellow);color:var(--black);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px}
+.quiz-count{float:right;color:var(--muted);font-size:13px;font-weight:500;margin-top:4px}
+.quiz-q{font-size:18px;font-weight:700;line-height:1.4;margin-bottom:18px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--gray-border);border-radius:10px;padding:13px 15px;cursor:pointer;font-family:inherit;font-size:15px;transition:all .15s ease}
+.opt:hover:not(.disabled){border-color:#ecc94b}
+.opt.selected{border-color:var(--yellow);background:#FFFBEB}
+.opt.correct{border-color:var(--green);background:var(--green-bg)}
+.opt.wrong{border-color:var(--red);background:var(--red-bg)}
+.opt.disabled{cursor:default}
+.opt-mark{width:20px;height:20px;border-radius:50%;border:2px solid #C9C9C9;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.opt.selected .opt-mark{border-color:var(--yellow)}
+.opt.selected .opt-mark::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--yellow)}
+.opt-mark svg{width:18px;height:18px}
+.tf-row{display:flex;gap:14px}
+.tf-btn{flex:1;border:2px solid var(--gray-border);background:#fff;font-family:inherit;font-size:17px;font-weight:700;padding:20px;border-radius:12px;cursor:pointer;transition:transform .15s ease,all .15s ease}
+.tf-btn:hover:not(.disabled){transform:scale(1.03);border-color:#ecc94b}
+.tf-btn.correct{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+.tf-btn.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.fill-q{font-size:16px;line-height:2.2}
+.fill-input{border:1.5px solid var(--gray-border);border-radius:8px;padding:6px 12px;font-family:inherit;font-size:15px;min-width:140px;outline:none}
+.fill-input:focus{border-color:var(--yellow)}
+.fill-input.correct{border-color:var(--green);background:var(--green-bg)}
+.fill-input.wrong{border-color:var(--red);background:var(--red-bg)}
+.essay-area{width:100%;min-height:110px;border:1.5px solid var(--gray-border);border-radius:10px;padding:12px 14px;font-family:inherit;font-size:15px;outline:none;resize:vertical}
+.essay-area:focus{border-color:var(--yellow)}
+.quiz-actions{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.fb{margin-top:16px;font-size:14.5px;border-radius:10px;padding:12px 16px;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--green-bg);color:var(--green)}
+.fb.err{background:var(--red-bg);color:var(--red)}
+.fb b{font-weight:700}
+.quiz-done{display:none;text-align:center;padding:8px 0}
+.quiz-done.show{display:block}
+.quiz-done .big{font-size:18px;font-weight:700;color:var(--green);margin-bottom:6px}
+
+/* ----- điều hướng cuối ----- */
+.lesson-nav{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:34px;flex-wrap:wrap}
+.nav-btn{font-family:inherit;font-weight:700;font-size:15px;padding:12px 22px;border-radius:10px;cursor:pointer;border:none;transition:all .2s ease}
+.nav-prev{background:var(--gray);color:#333}
+.nav-prev:hover:not(:disabled){background:#e7e7e7}
+.nav-mid{background:transparent;border:1.5px solid var(--yellow);color:var(--yellow)}
+.nav-mid:hover{background:var(--yellow);color:var(--black)}
+.nav-next{background:var(--yellow);color:var(--black)}
+.nav-next:hover:not(:disabled){background:#e3b500;transform:translateY(-2px)}
+.nav-btn:disabled{background:#ECECEC;color:#B7B7B7;cursor:not-allowed}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;right:24px;z-index:100;background:var(--black);color:#fff;font-size:14px;font-weight:500;padding:14px 18px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.3);display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s,transform .25s}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast svg{width:20px;height:20px;flex-shrink:0}
+
+/* ===== MODAL ===== */
+.modal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.modal-card{background:#fff;border-radius:20px;padding:40px 32px;max-width:420px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.modal-emoji{font-size:54px;line-height:1;margin-bottom:14px}
+.modal-card h2{font-size:22px;font-weight:900;margin-bottom:8px}
+.modal-card p{color:#555;font-size:15px;margin-bottom:24px}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .lesson-layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .mobile-select{display:block}
+  .learn{padding:22px 18px 48px}
+  .learn h1{font-size:22px}
+}
+@media(max-width:760px){
+  .nav-inner{flex-wrap:wrap;height:auto;padding:12px 0;gap:12px}
+  .nav-menu{order:3;width:100%;justify-content:center;margin:0;gap:30px}
+  .nav-link.active::after{bottom:-4px}
+  .nav-right{margin-left:0}
+  .greeting{display:none}
+}
+</style>
+</head>
+<body>
+<script>
+// ===== Auth =====
+(function(){
+  var raw = localStorage.getItem('lms_user');
+  if(!raw){ window.location.href='login.html'; return; }
+  try{
+    var u = JSON.parse(raw);
+    document.addEventListener('DOMContentLoaded', function(){
+      var greet=document.querySelector('.greeting');
+      if(greet&&u.name) greet.innerHTML='Xin chào, <b>'+u.name+'</b>';
+      var av=document.querySelector('.nav-right .avatar');
+      if(av&&u.name) av.textContent=u.name.charAt(0).toUpperCase();
+    });
+  }catch(e){}
+})();
+</script>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <img src="mascot.png" alt="Mascot AMELA" class="logo-mascot">
+      <img src="logo.png" alt="AMELA — TEK FOR HUMAN" class="logo-wordmark">
+    </a>
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link">Trang chủ</a>
+      <a href="courses.html" class="nav-link active">Khóa học</a>
+    </div>
+    <div class="nav-right">
+      <div class="avatar">NV</div>
+      <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
+      <button class="btn-logout">Đăng xuất</button>
+    </div>
+  </div>
+</nav>
+
+<div class="lesson-layout">
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sb-top">
+      <div class="sb-course" id="sbCourse">—</div>
+      <div class="sb-bar"><div class="sb-bar-fill" id="sbBar"></div></div>
+      <div class="sb-progress-text" id="sbProgress">Hoàn thành 0/0 bài</div>
+      <button class="btn-back" onclick="window.location.href='course-detail.html'">← Về chi tiết khóa</button>
+    </div>
+    <div class="sb-list" id="sbList"></div>
+  </aside>
+
+  <!-- ===== KHU VỰC HỌC ===== -->
+  <main class="learn">
+    <div class="mobile-select">
+      <select id="mobileSelect"></select>
+    </div>
+
+    <!-- 3A. Header -->
+    <nav class="crumb">
+      <a href="courses.html">Khóa học</a><span class="sep">&rsaquo;</span><a href="course-detail.html" id="crumbCourse">—</a><span class="sep">&rsaquo;</span><span class="here" id="crumbLesson">—</span>
+    </nav>
+    <h1 id="lessonTitle">—</h1>
+    <div class="meta" id="lessonMeta"></div>
+
+    <!-- 3B. Nội dung -->
+    <div id="contentArea"></div>
+
+    <!-- 3C. Câu hỏi -->
+    <div class="quiz" id="quiz">
+      <span class="quiz-count" id="quizCount"></span>
+      <span class="quiz-badge">Kiểm tra kiến thức</span>
+      <div id="quizBody"></div>
+      <div class="quiz-done" id="quizDone">
+        <div class="big">✓ Bạn đã trả lời hết câu hỏi của bài này!</div>
+        <p style="color:#555;font-size:14px">Bấm "Bài tiếp theo →" để học tiếp.</p>
+      </div>
+    </div>
+
+    <!-- 3D. Điều hướng -->
+    <div class="lesson-nav">
+      <button class="nav-btn nav-prev" id="btnPrev">← Bài trước</button>
+      <button class="nav-btn nav-mid" onclick="window.location.href='course-detail.html'">Về khóa học</button>
+      <button class="nav-btn nav-next" id="btnNext" disabled>Bài tiếp theo →</button>
+    </div>
+  </main>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#F5C518" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></g></svg>
+  <span id="toastText">Hoàn thành bài trước để mở khóa</span>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <div class="modal-emoji">🎉</div>
+    <h2>Bạn đã hoàn thành khóa học!</h2>
+    <p>Chúc mừng bạn đã hoàn tất tất cả bài học của khóa này.</p>
+    <button class="btn-yellow" onclick="window.location.href='course-detail.html'">Xem kết quả</button>
+  </div>
+</div>
+
+<script>
+/* ====== DỮ LIỆU MẪU (bài 2 - khóa A-CORE) ====== */
+const LESSON = {
+  courseId:"a-core", courseName:"A-CORE",
+  lessonId:"lesson-2", lessonTitle:"5 giá trị cốt lõi của AMELA",
+  duration:"30 phút", type:"video+quiz", lessonIndex:2, totalLessons:5,
+  content:{
+    type:"video", youtubeId:"dQw4w9WgXcQ",
+    title:"5 giá trị cốt lõi AMELA",
+    description:"Video giới thiệu 5 giá trị cốt lõi định hình văn hóa AMELA: Integrity, Innovation, Impact, Inclusion, Inspire."
+  },
+  questions:[
+    { id:1, type:"multiple_choice", question:"AMELA có bao nhiêu giá trị cốt lõi?",
+      options:["3","4","5","6"], correct:2,
+      explanation:"AMELA có 5 giá trị cốt lõi bắt đầu bằng chữ I: Integrity, Innovation, Impact, Inclusion, Inspire." },
+    { id:2, type:"true_false", question:"Integrity (Chính trực) là một trong các giá trị cốt lõi của AMELA.",
+      correct:true,
+      explanation:"Đúng. Integrity — Chính trực là giá trị đầu tiên và quan trọng nhất trong văn hóa AMELA." },
+    { id:3, type:"fill_blank", question:"Hoàn thành câu: AMELA hướng đến trở thành công ty công nghệ _____ cho con người.",
+      answer:"vì", hint:"Slogan: TEK FOR ___",
+      explanation:"AMELA với slogan 'TEK FOR HUMAN' — Công nghệ vì con người." },
+    { id:4, type:"essay", question:"Theo bạn, giá trị cốt lõi nào của AMELA phù hợp nhất với công việc của bạn? Giải thích ngắn gọn.",
+      sampleAnswer:"Gợi ý: Bạn có thể chọn bất kỳ giá trị nào và liên hệ với công việc thực tế của mình." }
+  ],
+  allLessons:[
+    { id:"lesson-1", title:"Giới thiệu về AMELA", duration:"20 phút", status:"done" },
+    { id:"lesson-2", title:"5 giá trị cốt lõi",   duration:"30 phút", status:"doing" },
+    { id:"lesson-3", title:"Quy trình làm việc",  duration:"25 phút", status:"locked" },
+    { id:"lesson-4", title:"Công cụ nội bộ",      duration:"20 phút", status:"locked" },
+    { id:"lesson-5", title:"Kiểm tra cuối khóa",  duration:"25 phút", status:"locked" }
+  ]
+};
+
+/* ====== ICON ====== */
+var ICON={
+  tick:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#16A34A"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  play:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#F5C518" stroke-width="2"/><path d="M10 8.5l6 3.5-6 3.5z" fill="#F5C518"/></svg>',
+  lock:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#B7B7B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></g></svg>',
+  clock:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.6V12l3 1.9"/></g></svg>',
+  note:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#555" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><line x1="9" y1="12" x2="16" y2="12"/><line x1="9" y1="16" x2="14" y2="16"/></g></svg>',
+  ok:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#16A34A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  no:'<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round"/></svg>'
+};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+/* ====== TIẾN ĐỘ (localStorage 'lms_progress') ====== */
+function loadProgress(){
+  try{ var p=JSON.parse(localStorage.getItem('lms_progress')); if(p&&p.courseId===LESSON.courseId) return p; }catch(e){}
+  return { courseId:LESSON.courseId, lessons:{} };
+}
+function saveProgress(p){ localStorage.setItem('lms_progress', JSON.stringify(p)); }
+var progress = loadProgress();
+
+// Trạng thái hiển thị của các bài = data gốc + ghi đè từ localStorage
+function lessonStatus(id, fallback){
+  if(progress.lessons[id] && progress.lessons[id].status) return progress.lessons[id].status;
+  return fallback;
+}
+// đảm bảo có bản ghi cho bài hiện tại
+if(!progress.lessons[LESSON.lessonId]) progress.lessons[LESSON.lessonId] = { status:"doing", answeredQuestions:[] };
+var cur = progress.lessons[LESSON.lessonId];
+if(!cur.answeredQuestions) cur.answeredQuestions = [];
+
+/* ====== HEADER ====== */
+document.title = LESSON.lessonTitle + ' — AMELA';
+document.getElementById('crumbCourse').textContent = LESSON.courseName;
+document.getElementById('crumbLesson').textContent = LESSON.lessonTitle;
+document.getElementById('lessonTitle').textContent = LESSON.lessonTitle;
+var typeLabel = {video:"Video", pdf:"PDF", slide:"Slide", html:"Văn bản"}[LESSON.content.type] || "Nội dung";
+var lessonDone = lessonStatus(LESSON.lessonId,'doing')==='done';
+document.getElementById('lessonMeta').innerHTML =
+  '<span class="m">'+ICON.clock+'<span>'+esc(LESSON.duration)+'</span></span>'
+  +'<span class="m">'+ICON.note+'<span>'+typeLabel+'</span></span>'
+  +'<span class="badge" id="statusBadge">'+(lessonDone?'Hoàn thành':'Đang học')+'</span>';
+
+/* ====== SIDEBAR ====== */
+document.getElementById('sbCourse').textContent = LESSON.courseName;
+function sbIcon(st){ return st==='done'?ICON.tick : st==='locked'?ICON.lock : ICON.play; }
+function renderSidebar(){
+  var doneCount = LESSON.allLessons.filter(function(l){return lessonStatus(l.id,l.status)==='done';}).length;
+  var pct = Math.round(doneCount/LESSON.totalLessons*100);
+  document.getElementById('sbProgress').textContent = 'Hoàn thành '+doneCount+'/'+LESSON.totalLessons+' bài';
+  setTimeout(function(){ document.getElementById('sbBar').style.width = pct+'%'; }, 200);
+
+  document.getElementById('sbList').innerHTML = LESSON.allLessons.map(function(l,i){
+    var st = lessonStatus(l.id, l.status);
+    var isCur = l.id===LESSON.lessonId;
+    var cls = 'sb-item'+(isCur?' current':'')+(st==='locked'?' locked':'');
+    return '<button class="'+cls+'" data-id="'+l.id+'" data-st="'+st+'">'
+         + '<span class="sb-ico">'+sbIcon(isCur&&st!=='done'?'doing':st)+'</span>'
+         + '<span class="sb-item-body"><span class="sb-item-title">Bài '+(i+1)+': '+esc(l.title)+'</span>'
+         + '<span class="sb-item-dur">'+esc(l.duration)+'</span></span>'
+         + '</button>';
+  }).join('');
+  document.querySelectorAll('.sb-item').forEach(function(b){
+    b.addEventListener('click', function(){
+      var st=b.getAttribute('data-st'); var id=b.getAttribute('data-id');
+      if(st==='locked'){ showToast('Hoàn thành bài trước để mở khóa'); return; }
+      if(id===LESSON.lessonId) return;               // đang xem
+      window.location.href='lesson.html?lesson='+id; // bài đã mở khóa -> xem
+    });
+  });
+
+  // dropdown mobile
+  var sel=document.getElementById('mobileSelect');
+  sel.innerHTML = LESSON.allLessons.map(function(l,i){
+    var st=lessonStatus(l.id,l.status);
+    var lock = st==='locked' ? ' 🔒' : '';
+    return '<option value="'+l.id+'"'+(l.id===LESSON.lessonId?' selected':'')+(st==='locked'?' disabled':'')+'>Bài '+(i+1)+': '+esc(l.title)+lock+'</option>';
+  }).join('');
+  sel.onchange=function(){ if(sel.value!==LESSON.lessonId) window.location.href='lesson.html?lesson='+sel.value; };
+}
+renderSidebar();
+
+/* ====== NỘI DUNG (theo type) ====== */
+function ackLabel(t){ return t==='video'?'Tôi đã xem xong video' : t==='slide'?'Tôi đã xem xong slide' : 'Tôi đã đọc xong'; }
+function renderContent(){
+  var c=LESSON.content, html='';
+  if(c.type==='video'){
+    html='<div class="video-wrap"><iframe src="https://www.youtube.com/embed/'+encodeURIComponent(c.youtubeId)+'" title="'+esc(c.title)+'" allowfullscreen></iframe></div>';
+  }else if(c.type==='pdf'){
+    html='<iframe class="content-pdf" src="'+(c.pdfUrl||'')+'"></iframe>'
+       +'<div class="ack-row"><a class="btn-outline" href="'+(c.pdfUrl||'#')+'" target="_blank" rel="noopener">Mở PDF trong tab mới</a></div>';
+  }else if(c.type==='slide'){
+    html='<p class="content-desc" style="margin-bottom:10px">Slide được nhúng từ Google Slides</p>'
+       +'<div class="video-wrap"><iframe src="'+(c.slideUrl||'')+'" allowfullscreen></iframe></div>';
+  }else if(c.type==='html'){
+    html='<div class="content-html">'+(c.html||'')+'</div>';
+  }
+  if(c.title)       html+='<div class="content-title">'+esc(c.title)+'</div>';
+  if(c.description) html+='<div class="content-desc">'+esc(c.description)+'</div>';
+  html+='<div class="ack-row"><button class="btn-yellow" id="ackBtn">'+ackLabel(c.type)+'</button></div>';
+  document.getElementById('contentArea').innerHTML=html;
+  document.getElementById('ackBtn').addEventListener('click', startQuiz);
+}
+renderContent();
+
+/* ====== CÂU HỎI ====== */
+var quizEl=document.getElementById('quiz'), quizBody=document.getElementById('quizBody');
+var quizCount=document.getElementById('quizCount'), quizDone=document.getElementById('quizDone');
+var answered=new Set(cur.answeredQuestions||[]);
+var qPos=0;
+
+function hasQuestions(){ return LESSON.questions && LESSON.questions.length>0; }
+
+function startQuiz(){
+  var ack=document.getElementById('ackBtn'); if(ack){ ack.disabled=true; ack.style.opacity=.6; ack.textContent='✓ '+ack.textContent; }
+  if(!hasQuestions()){ finishLesson(); return; }
+  quizEl.classList.add('show');
+  quizEl.scrollIntoView({behavior:'smooth',block:'start'});
+  gotoNextUnanswered();
+}
+function gotoNextUnanswered(){
+  var idx=LESSON.questions.findIndex(function(q,i){return !answered.has(i);});
+  if(idx<0){ showQuizDone(); return; }
+  qPos=idx; renderQuestion(idx);
+}
+function showQuizDone(){
+  quizBody.innerHTML=''; quizCount.textContent='';
+  quizDone.classList.add('show');
+  finishLesson();
+}
+function renderQuestion(i){
+  quizDone.classList.remove('show');
+  var q=LESSON.questions[i];
+  quizCount.textContent='Câu '+(i+1)+'/'+LESSON.questions.length;
+  var h='<div class="quiz-q">'+esc(q.question)+'</div>';
+  if(q.type==='multiple_choice'){
+    h+='<div class="opts">'+q.options.map(function(o,oi){return '<button class="opt" data-i="'+oi+'"><span class="opt-mark"></span><span class="opt-text">'+esc(o)+'</span></button>';}).join('')+'</div>';
+    h+='<div class="fb" id="fb"></div><div class="quiz-actions"><button class="btn-yellow" id="confirmBtn" disabled>Xác nhận</button></div>';
+  }else if(q.type==='true_false'){
+    h+='<div class="tf-row"><button class="tf-btn" data-v="true">ĐÚNG</button><button class="tf-btn" data-v="false">SAI</button></div>';
+    h+='<div class="fb" id="fb"></div><div class="quiz-actions" id="qActions"></div>';
+  }else if(q.type==='fill_blank'){
+    var parts=q.question.split(/\[?_{3,}\]?/);
+    h='<div class="quiz-q fill-q">'+esc(parts[0]||'')+'<input class="fill-input" id="fillInput" type="text" placeholder="..."> '+esc(parts[1]||'')+'</div>';
+    if(q.hint) h+='<div style="color:#999;font-size:13px;margin-bottom:8px">Gợi ý: '+esc(q.hint)+'</div>';
+    h+='<div class="fb" id="fb"></div><div class="quiz-actions"><button class="btn-yellow" id="confirmBtn">Xác nhận</button></div>';
+  }else if(q.type==='essay'){
+    h+='<textarea class="essay-area" id="essayInput" placeholder="Nhập câu trả lời của bạn..."></textarea>';
+    h+='<div class="fb" id="fb"></div><div class="quiz-actions"><button class="btn-yellow" id="confirmBtn">Nộp câu trả lời</button></div>';
+  }
+  quizBody.innerHTML=h;
+  wireQuestion(i,q);
+}
+function nextLabel(i){ return i>=LESSON.questions.length-1 ? 'Hoàn thành bài' : 'Câu tiếp theo →'; }
+function afterAnswer(i){
+  if(!answered.has(i)){ answered.add(i); cur.answeredQuestions=Array.from(answered); cur.status='doing'; saveProgress(progress); }
+  var act=document.getElementById('qActions')||quizBody.querySelector('.quiz-actions');
+  act.innerHTML='<button class="btn-yellow" id="nextQ">'+nextLabel(i)+'</button>';
+  document.getElementById('nextQ').addEventListener('click', function(){
+    if(i>=LESSON.questions.length-1){ showQuizDone(); }
+    else { qPos=i+1; renderQuestion(i+1); quizEl.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+}
+function wireQuestion(i,q){
+  var fb=document.getElementById('fb');
+  if(q.type==='multiple_choice'){
+    var sel=-1, opts=quizBody.querySelectorAll('.opt'), confirm=document.getElementById('confirmBtn');
+    opts.forEach(function(o){ o.addEventListener('click',function(){
+      if(o.classList.contains('disabled')) return;
+      opts.forEach(function(x){x.classList.remove('selected');}); o.classList.add('selected');
+      sel=+o.getAttribute('data-i'); confirm.disabled=false;
+    });});
+    confirm.addEventListener('click',function(){
+      if(sel<0) return;
+      opts.forEach(function(x){x.classList.add('disabled');});
+      confirm.style.display='none';
+      if(sel===q.correct){
+        opts[sel].classList.add('correct'); opts[sel].querySelector('.opt-mark').innerHTML=ICON.ok;
+        fb.className='fb ok show'; fb.innerHTML='<b>Chính xác!</b> '+esc(q.explanation);
+      }else{
+        opts[sel].classList.add('wrong'); opts[sel].querySelector('.opt-mark').innerHTML=ICON.no;
+        opts[q.correct].classList.add('correct'); opts[q.correct].querySelector('.opt-mark').innerHTML=ICON.ok;
+        fb.className='fb err show'; fb.innerHTML='<b>Chưa đúng.</b> '+esc(q.explanation);
+      }
+      afterAnswer(i);
+    });
+  }else if(q.type==='true_false'){
+    var btns=quizBody.querySelectorAll('.tf-btn');
+    btns.forEach(function(b){ b.addEventListener('click',function(){
+      if(b.classList.contains('disabled')) return;
+      btns.forEach(function(x){x.classList.add('disabled');});
+      var v=b.getAttribute('data-v')==='true';
+      if(v===q.correct){ b.classList.add('correct'); fb.className='fb ok show'; fb.innerHTML='<b>Chính xác!</b> '+esc(q.explanation); }
+      else{
+        b.classList.add('wrong');
+        btns.forEach(function(x){ if((x.getAttribute('data-v')==='true')===q.correct) x.classList.add('correct'); });
+        fb.className='fb err show'; fb.innerHTML='<b>Chưa đúng.</b> '+esc(q.explanation);
+      }
+      afterAnswer(i);
+    });});
+  }else if(q.type==='fill_blank'){
+    var inp=document.getElementById('fillInput'), confirm=document.getElementById('confirmBtn');
+    function check(){
+      var val=(inp.value||'').trim().toLowerCase(), ans=(q.answer||'').trim().toLowerCase();
+      inp.disabled=true; confirm.style.display='none';
+      if(val===ans){ inp.classList.add('correct'); fb.className='fb ok show'; fb.innerHTML='<b>Chính xác!</b> '+esc(q.explanation); }
+      else{ inp.classList.add('wrong'); fb.className='fb err show'; fb.innerHTML='<b>Chưa đúng.</b> Đáp án: <b>'+esc(q.answer)+'</b>. '+esc(q.explanation); }
+      afterAnswer(i);
+    }
+    confirm.addEventListener('click',check);
+    inp.addEventListener('keydown',function(e){ if(e.key==='Enter') check(); });
+  }else if(q.type==='essay'){
+    var ta=document.getElementById('essayInput'), confirm=document.getElementById('confirmBtn');
+    confirm.addEventListener('click',function(){
+      ta.disabled=true; confirm.style.display='none';
+      fb.className='fb ok show';
+      fb.innerHTML='<b>✓ Đã ghi nhận câu trả lời của bạn.</b><br><span style="color:#777;font-weight:400">'+esc(q.sampleAnswer||'')+'</span>';
+      afterAnswer(i);
+    });
+  }
+}
+
+/* ====== HOÀN THÀNH BÀI ====== */
+function finishLesson(){
+  cur.status='done'; cur.completedAt=new Date().toISOString(); cur.answeredQuestions=Array.from(answered);
+  // mở khóa bài kế tiếp
+  var idx=LESSON.allLessons.findIndex(function(l){return l.id===LESSON.lessonId;});
+  if(idx>=0 && idx+1<LESSON.allLessons.length){
+    var nx=LESSON.allLessons[idx+1].id;
+    if(!progress.lessons[nx]) progress.lessons[nx]={status:'doing',answeredQuestions:[]};
+    else if(progress.lessons[nx].status==='locked') progress.lessons[nx].status='doing';
+  }
+  saveProgress(progress);
+  var sb=document.getElementById('statusBadge'); if(sb) sb.textContent='Hoàn thành';
+  document.getElementById('btnNext').disabled=false;
+  renderSidebar();
+}
+
+/* ====== ĐIỀU HƯỚNG ====== */
+var idx=LESSON.allLessons.findIndex(function(l){return l.id===LESSON.lessonId;});
+var prevId=idx>0?LESSON.allLessons[idx-1].id:null;
+var nextId=idx<LESSON.allLessons.length-1?LESSON.allLessons[idx+1].id:null;
+
+var btnPrev=document.getElementById('btnPrev');
+if(!prevId) btnPrev.disabled=true;
+else btnPrev.addEventListener('click',function(){ window.location.href='lesson.html?lesson='+prevId; });
+
+var btnNext=document.getElementById('btnNext');
+btnNext.addEventListener('click',function(){
+  if(btnNext.disabled) return;
+  if(LESSON.lessonIndex>=LESSON.totalLessons || !nextId){ document.getElementById('modal').classList.add('show'); }
+  else { window.location.href='lesson.html?lesson='+nextId; }
+});
+
+/* ====== KHÔI PHỤC TRẠNG THÁI KHI LOAD ====== */
+(function restore(){
+  var done = lessonStatus(LESSON.lessonId,'doing')==='done';
+  if(done || answered.size>0){
+    // đã từng học -> mở sẵn khu câu hỏi, bỏ qua câu đã trả lời
+    var ack=document.getElementById('ackBtn'); if(ack){ ack.disabled=true; ack.style.opacity=.6; }
+    if(hasQuestions()){ quizEl.classList.add('show'); gotoNextUnanswered(); }
+    else { finishLesson(); }
+    if(done){ btnNext.disabled=false; }
+  }
+})();
+
+/* ====== TOAST ====== */
+var toast=document.getElementById('toast'), toastTimer=null;
+function showToast(msg){
+  document.getElementById('toastText').textContent=msg;
+  toast.classList.add('show'); clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){ toast.classList.remove('show'); },3000);
+}
+
+/* ====== ĐĂNG XUẤT ====== */
+document.querySelector('.btn-logout').addEventListener('click',function(){
+  localStorage.removeItem('lms_user'); window.location.href='login.html';
+});
+</script>
+</body>
+</html>

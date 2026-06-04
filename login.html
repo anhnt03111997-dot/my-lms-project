@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng nhập — AMELA LMS</title>
+<script>
+// Nếu đã đăng nhập -> vào thẳng index.html
+(function(){
+  try{ if(localStorage.getItem('lms_user')){ window.location.href = 'index.html'; } }catch(e){}
+})();
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+
+:root{
+  --black:#1A1A1A;
+  --white:#FFFFFF;
+  --yellow:#F5C518;
+  --gray:#F5F5F5;
+  --muted:#9A9A9A;
+  --border:#E2E2E2;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Roboto',sans-serif;background:var(--black);color:var(--black);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:24px;-webkit-font-smoothing:antialiased;
+}
+.login-card{
+  background:var(--white);width:100%;max-width:420px;
+  border-radius:20px;padding:40px 36px;
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+  text-align:center;
+}
+.login-mascot{height:90px;width:auto;display:block;margin:0 auto 14px}
+.login-logo{height:28px;width:auto;display:block;margin:0 auto 24px}
+.login-card h1{font-size:22px;font-weight:700;color:var(--black)}
+.login-card .subtitle{color:var(--muted);font-size:14px;margin-bottom:28px}
+
+form{text-align:left}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:14px;font-weight:500;margin-bottom:6px;color:var(--black)}
+.input-wrap{position:relative;display:flex;align-items:center}
+.field input{
+  width:100%;font-family:inherit;font-size:15px;color:var(--black);
+  border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;
+  outline:none;transition:border-color .2s ease,box-shadow .2s ease;
+}
+.field input::placeholder{color:#BDBDBD}
+.field input:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,197,24,.18)}
+.input-wrap input{padding-right:46px}
+.toggle-pw{
+  position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;padding:6px;display:flex;
+  border-radius:8px;transition:background .2s ease;
+}
+.toggle-pw:hover{background:var(--gray)}
+.toggle-pw svg{width:22px;height:22px;display:block}
+
+.error-msg{
+  display:none;background:#FEE2E2;color:#DC2626;
+  border-radius:8px;padding:10px 14px;font-size:14px;margin-bottom:16px;
+}
+.error-msg.show{display:block}
+
+.btn-login{
+  width:100%;background:var(--yellow);color:var(--black);
+  font-family:inherit;font-weight:700;font-size:16px;
+  padding:14px;border-radius:10px;border:none;cursor:pointer;
+  transition:all .2s ease;margin-top:4px;
+}
+.btn-login:hover{background:#e3b500;transform:translateY(-2px);box-shadow:0 10px 24px rgba(245,197,24,.4)}
+
+@media(max-width:440px){
+  .login-card{padding:32px 22px;border-radius:16px}
+  .login-mascot{height:78px}
+}
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <img src="mascot.png" alt="Mascot AMELA" class="login-mascot">
+  <img src="logo-dark.png" alt="AMELA — TEK FOR HUMAN" class="login-logo">
+  <h1>Chào mừng trở lại</h1>
+  <p class="subtitle">Đăng nhập để tiếp tục học</p>
+
+  <form id="loginForm" novalidate>
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="name@amela.vn" autocomplete="username">
+    </div>
+
+    <div class="field">
+      <label for="password">Mật khẩu</label>
+      <div class="input-wrap">
+        <input type="password" id="password" placeholder="Nhập mật khẩu" autocomplete="current-password">
+        <button type="button" class="toggle-pw" id="togglePw" aria-label="Hiện/ẩn mật khẩu">
+          <!-- icon con mắt (mặc định: đang ẩn -> hiển thị mắt mở) -->
+          <svg id="eyeIcon" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></g></svg>
+        </button>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-login">Đăng nhập</button>
+  </form>
+</div>
+
+<script>
+// ====== 3 tài khoản hardcode ======
+const USERS = [
+  { email:"admin@amela.vn",    password:"admin123",   name:"Admin AMELA",    role:"admin" },
+  { email:"teacher@amela.vn",  password:"teacher123", name:"Giảng viên",     role:"teacher" },
+  { email:"nhanvien@amela.vn", password:"nv1234",      name:"Nguyễn Văn A",   role:"employee" }
+];
+
+const form    = document.getElementById('loginForm');
+const emailEl  = document.getElementById('email');
+const pwEl     = document.getElementById('password');
+const errorEl  = document.getElementById('errorMsg');
+const toggle   = document.getElementById('togglePw');
+const eyeIcon  = document.getElementById('eyeIcon');
+
+// Hiện/ẩn mật khẩu
+var EYE_OPEN  = '<g fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></g>';
+var EYE_OFF   = '<g fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7c1.7 0 3.2.5 4.5 1.2M22 12s-3.6 7-10 7c-1.7 0-3.2-.5-4.5-1.2"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><line x1="3" y1="3" x2="21" y2="21"/></g>';
+toggle.addEventListener('click', function(){
+  var show = pwEl.type === 'password';
+  pwEl.type = show ? 'text' : 'password';
+  eyeIcon.innerHTML = show ? EYE_OFF : EYE_OPEN;
+});
+
+function showError(msg){ errorEl.textContent = msg; errorEl.classList.add('show'); }
+function clearError(){ errorEl.textContent = ''; errorEl.classList.remove('show'); }
+
+function handleLogin(){
+  clearError();
+  var email = emailEl.value.trim();
+  var pw     = pwEl.value;
+  var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Bước 1 — Validate
+  if(!email){               showError('Vui lòng nhập email'); return; }
+  if(!emailRe.test(email)){ showError('Email không đúng định dạng'); return; }
+  if(!pw){                  showError('Vui lòng nhập mật khẩu'); return; }
+  if(pw.length < 6){        showError('Mật khẩu tối thiểu 6 ký tự'); return; }
+
+  // Bước 2 — Kiểm tra tài khoản
+  var user = USERS.find(function(u){ return u.email.toLowerCase() === email.toLowerCase(); });
+  if(!user){                showError('Email không tồn tại trong hệ thống'); return; }
+  if(user.password !== pw){ showError('Mật khẩu không chính xác'); return; }
+
+  // Bước 3 — Thành công
+  localStorage.setItem('lms_user', JSON.stringify({
+    email: user.email,
+    name:  user.name,
+    role:  user.role
+  }));
+  window.location.href = 'index.html';
+}
+
+form.addEventListener('submit', function(e){ e.preventDefault(); handleLogin(); });
+// gõ lại thì xóa thông báo lỗi
+emailEl.addEventListener('input', clearError);
+pwEl.addEventListener('input', clearError);
+</script>
+
+</body>
+</html>

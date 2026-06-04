@@ -51,12 +51,23 @@ section{padding:64px 0}
 .logo{
   color:var(--yellow);
   font-weight:900;font-size:22px;letter-spacing:-.5px;
-  display:flex;align-items:center;gap:10px;
+  display:flex;align-items:center;gap:10px;text-decoration:none;
 }
 .logo img{width:auto;display:block}
 .logo .logo-mascot{height:36px}
 .logo .logo-wordmark{height:30px}
-.nav-right{display:flex;align-items:center;gap:16px}
+.nav-menu{display:flex;align-items:center;gap:26px;margin-left:8px}
+.nav-link{
+  color:#C9C9C9;text-decoration:none;font-size:15px;font-weight:500;
+  padding:6px 2px;position:relative;transition:color .2s ease;
+}
+.nav-link:hover{color:var(--white)}
+.nav-link.active{color:var(--yellow);font-weight:700}
+.nav-link.active::after{
+  content:"";position:absolute;left:0;right:0;bottom:-6px;height:3px;
+  background:var(--yellow);border-radius:3px;
+}
+.nav-right{display:flex;align-items:center;gap:16px;margin-left:auto}
 .avatar{
   width:38px;height:38px;border-radius:50%;
   background:linear-gradient(135deg,var(--yellow),#d9a800);
@@ -293,6 +304,12 @@ section{padding:64px 0}
 
 /* ============ RESPONSIVE ============ */
 /* ===== RESPONSIVE ===== */
+@media(max-width:760px){
+  .nav-inner{flex-wrap:wrap;height:auto;padding:12px 0;gap:12px}
+  .nav-menu{order:3;width:100%;justify-content:center;margin:0;gap:30px}
+  .nav-link.active::after{bottom:-4px}
+  .nav-right{margin-left:0}
+}
 @media(max-width:1024px){
   .container{padding:0 20px}
   .cat-grid{grid-template-columns:repeat(2,1fr)}
@@ -316,7 +333,6 @@ section{padding:64px 0}
   .search-select{flex:1 1 auto}
   .search-btn{flex:1 1 auto}
   .course-grid,.cat-grid{grid-template-columns:1fr}
-  .nav-inner{height:60px}
   .logo{font-size:18px;gap:8px}
   .logo .logo-mascot{height:30px}
   .logo .logo-wordmark{height:26px}
@@ -337,11 +353,33 @@ section{padding:64px 0}
 </style>
 </head>
 <body>
+<script>
+(function(){
+  var user = localStorage.getItem('lms_user');
+  if(!user){ window.location.href = 'login.html'; return; }
+  try {
+    var u = JSON.parse(user);
+    document.addEventListener('DOMContentLoaded', function(){
+      var greet = document.querySelector('.greeting');
+      if(greet && u.name){ greet.innerHTML = 'Xin chào, <b>' + u.name + '</b>'; }
+      var av = document.querySelector('.avatar');
+      if(av && u.name){ av.textContent = u.name.charAt(0).toUpperCase(); }
+    });
+  } catch(e){}
+})();
+</script>
 
 <!-- ============ 1. NAVBAR ============ -->
 <nav class="navbar">
   <div class="container nav-inner">
-    <div class="logo"><img src="mascot.png" alt="Mascot AMELA" class="logo-mascot"><img src="logo.png" alt="AMELA — TEK FOR HUMAN" class="logo-wordmark"></div>
+    <a href="index.html" class="logo">
+      <img src="mascot.png" alt="Mascot AMELA" class="logo-mascot">
+      <img src="logo.png" alt="AMELA — TEK FOR HUMAN" class="logo-wordmark">
+    </a>
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link active">Trang chủ</a>
+      <a href="courses.html" class="nav-link">Khóa học</a>
+    </div>
     <div class="nav-right">
       <div class="avatar">NV</div>
       <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
@@ -407,7 +445,7 @@ section{padding:64px 0}
         <span class="status learning">Đang học</span>
         <div class="progress-row"><span>Tiến độ</span><b>60%</b></div>
         <div class="progress-track"><div class="progress-fill" data-progress="60"></div></div>
-        <button class="btn-action yellow">Tiếp tục học</button>
+        <button class="btn-action yellow" onclick="window.location.href='courses.html'">Tiếp tục học</button>
       </div>
 
       <!-- Card 2 -->
@@ -417,7 +455,7 @@ section{padding:64px 0}
         <span class="status waiting">Chờ thi</span>
         <div class="progress-row"><span>Tiến độ</span><b>100%</b></div>
         <div class="progress-track"><div class="progress-fill" data-progress="100"></div></div>
-        <button class="btn-action orange">Làm bài kiểm tra</button>
+        <button class="btn-action orange" onclick="window.location.href='courses.html'">Làm bài kiểm tra</button>
       </div>
 
       <!-- Card 3 -->
@@ -427,7 +465,7 @@ section{padding:64px 0}
         <span class="status notstarted">Chưa bắt đầu</span>
         <div class="progress-row"><span>Tiến độ</span><b>0%</b></div>
         <div class="progress-track"><div class="progress-fill" data-progress="0"></div></div>
-        <button class="btn-action yellow">Bắt đầu ngay</button>
+        <button class="btn-action yellow" onclick="window.location.href='courses.html'">Bắt đầu ngay</button>
       </div>
 
     </div>
@@ -442,7 +480,7 @@ section{padding:64px 0}
       <p>Lựa chọn lộ trình theo nhóm năng lực</p>
     </div>
     <div class="cat-grid">
-      <div class="cat-card">
+      <div class="cat-card" onclick="window.location.href='courses.html'">
         <div class="cat-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
             <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -456,7 +494,7 @@ section{padding:64px 0}
         <h3>Phát triển năng lực cốt lõi</h3>
         <p class="cat-count"><b>8</b> khóa học</p>
       </div>
-      <div class="cat-card">
+      <div class="cat-card" onclick="window.location.href='courses.html'">
         <div class="cat-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
             <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -470,7 +508,7 @@ section{padding:64px 0}
         <h3>Phát triển năng lực chuyên môn</h3>
         <p class="cat-count"><b>6</b> khóa học</p>
       </div>
-      <div class="cat-card">
+      <div class="cat-card" onclick="window.location.href='courses.html'">
         <div class="cat-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
             <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -487,7 +525,7 @@ section{padding:64px 0}
         <h3>Phát triển năng lực lãnh đạo</h3>
         <p class="cat-count"><b>5</b> khóa học</p>
       </div>
-      <div class="cat-card">
+      <div class="cat-card" onclick="window.location.href='courses.html'">
         <div class="cat-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
             <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -602,7 +640,7 @@ section{padding:64px 0}
 <!-- ============ 6. FOOTER ============ -->
 <footer class="footer">
   <div class="container">
-    <div class="brand">AMELA © 2026</div>
+    <div class="brand">AMELA Technology © 2026</div>
     <div class="sub">Hệ thống LMS Nội bộ — Bảo mật</div>
   </div>
 </footer>
@@ -640,7 +678,8 @@ window.addEventListener('load', function(){
 
 // Demo: nút đăng xuất
 document.querySelector('.btn-logout').addEventListener('click', function(){
-  alert('Đăng xuất thành công!'); // TODO: thay bằng logic đăng xuất thật
+  localStorage.removeItem('lms_user');
+  window.location.href = 'login.html';
 });
 
 // Mũi tên cuộn ngang cho gallery & phản hồi

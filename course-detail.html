@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chi tiết khóa học — AMELA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+
+:root{
+  --black:#1A1A1A; --black-2:#2A2A2A; --white:#FFFFFF;
+  --yellow:#F5C518; --gray:#F5F5F5; --gray-border:#E2E2E2;
+  --muted:#9A9A9A; --radius:14px;
+  --shadow:0 8px 30px rgba(0,0,0,.08); --shadow-hover:0 18px 45px rgba(0,0,0,.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);line-height:1.6;-webkit-font-smoothing:antialiased}
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* ===== NAVBAR ===== */
+.navbar{background:var(--black);position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;height:70px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo .logo-mascot{height:36px;width:auto;display:block}
+.logo .logo-wordmark{height:30px;width:auto;display:block}
+.nav-menu{display:flex;align-items:center;gap:26px;margin-left:8px}
+.nav-link{color:#C9C9C9;text-decoration:none;font-size:15px;font-weight:500;padding:6px 2px;position:relative;transition:color .2s ease}
+.nav-link:hover{color:var(--white)}
+.nav-link.active{color:var(--yellow);font-weight:700}
+.nav-link.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:3px;background:var(--yellow);border-radius:3px}
+.nav-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.avatar{width:38px;height:38px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--yellow),#d9a800);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--black);font-size:15px}
+.greeting{color:var(--white);font-size:15px;font-weight:400}
+.greeting b{font-weight:700}
+.btn-logout{background:transparent;border:1.5px solid var(--yellow);color:var(--yellow);padding:8px 18px;border-radius:30px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s ease}
+.btn-logout:hover{background:var(--yellow);color:var(--black);transform:translateY(-2px)}
+
+/* ===== BREADCRUMB ===== */
+.breadcrumb-bar{background:var(--black);padding:16px 0;border-top:1px solid rgba(255,255,255,.05)}
+.crumb{font-size:14px;color:var(--muted)}
+.crumb a{color:var(--muted);text-decoration:none;transition:color .2s ease}
+.crumb a:hover{color:var(--yellow)}
+.crumb .sep{margin:0 8px;opacity:.7}
+.crumb .here{color:var(--yellow);font-weight:500}
+
+/* ===== LAYOUT 2 CỘT ===== */
+.detail-wrap{padding:36px 24px 64px}
+.detail-grid{display:grid;grid-template-columns:minmax(0,1.85fr) minmax(0,1fr);gap:32px;align-items:start}
+.detail-side{position:sticky;top:88px;display:flex;flex-direction:column;gap:20px}
+
+/* ===== CỘT PHẢI — THẺ THÔNG TIN ===== */
+.info-card{background:#fff;border:1px solid var(--gray-border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.info-top{position:relative;background:linear-gradient(120deg,var(--black) 0%,var(--black-2) 100%);padding:24px 20px}
+.level-badge{position:absolute;top:16px;right:16px;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px}
+.level-badge.basic{background:var(--yellow);color:var(--black)}
+.level-badge.advanced{background:var(--black);color:var(--yellow);border:1.5px solid var(--yellow)}
+.info-top h1{color:#fff;font-size:22px;font-weight:700;line-height:1.25;margin:0 70px 12px 0}
+.group-badge{display:inline-block;background:#FFF8DC;color:#B8860B;font-size:12.5px;font-weight:700;padding:5px 13px;border-radius:20px}
+.info-body{padding:20px}
+.info-row{display:flex;align-items:center;gap:10px;font-size:14px;margin-bottom:12px}
+.info-row .ico{width:20px;height:20px;flex-shrink:0;display:flex}
+.info-row .ico svg{width:20px;height:20px}
+.info-row .lbl{color:var(--muted)}
+.info-row .val{color:var(--black);font-weight:600}
+.hr{height:1px;background:var(--gray-border);margin:16px 0}
+.desc-label{font-weight:700;font-size:15px;margin-bottom:6px}
+.desc-text{color:#555;font-size:14px}
+.btn-cta{width:100%;border:none;background:var(--yellow);color:var(--black);font-family:inherit;font-weight:700;font-size:16px;padding:14px;border-radius:10px;cursor:pointer;transition:all .2s ease}
+.btn-cta:hover{background:#e3b500;transform:translateY(-2px);box-shadow:0 10px 24px rgba(245,197,24,.4)}
+.progress-wrap{margin-top:14px}
+.progress-label{font-size:13px;color:#555;margin-bottom:6px}
+.progress-label b{color:var(--black)}
+.bar{height:9px;background:var(--gray);border-radius:10px;overflow:hidden}
+.bar-fill{height:100%;width:0;background:var(--yellow);border-radius:10px;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+
+/* ===== CỘT PHẢI — DANH SÁCH BÀI HỌC ===== */
+.lessons-card{background:#fff;border:1px solid var(--gray-border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.lessons-card h2{font-size:17px;font-weight:700}
+.lessons-card .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+.lesson{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:none;border:none;border-radius:10px;padding:11px 10px;cursor:pointer;font-family:inherit;transition:background .2s ease}
+.lesson + .lesson{border-top:1px solid var(--gray-border)}
+.lesson:hover{background:var(--gray)}
+.lesson.locked{cursor:not-allowed}
+.lesson.locked .lesson-title{color:var(--muted)}
+.lesson.doing{background:rgba(245,197,24,.12)}
+.lesson-ico{width:26px;height:26px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.lesson-ico svg{width:24px;height:24px;display:block}
+.lesson-num{font-size:13px;font-weight:700;color:var(--muted);width:16px;flex-shrink:0}
+.lesson-title{flex:1;font-size:14px;font-weight:500;line-height:1.3}
+.lesson-dur{font-size:12.5px;color:var(--muted);flex-shrink:0}
+
+/* ===== CỘT TRÁI ===== */
+.block{margin-bottom:38px}
+.block h2{font-size:22px;font-weight:900;letter-spacing:-.5px;margin-bottom:18px}
+.obj-list,.req-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+.obj-list li,.req-list li{display:flex;align-items:flex-start;gap:12px;font-size:15px;color:#333}
+.obj-list .ic,.req-list .ic{flex-shrink:0;margin-top:2px;display:flex}
+.obj-list .ic svg{width:20px;height:20px}
+.req-list .dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);flex-shrink:0;margin-top:8px}
+.type-badges{display:flex;flex-wrap:wrap;gap:12px}
+.type-badge{display:inline-flex;align-items:center;gap:8px;background:var(--gray);border:1px solid var(--gray-border);border-radius:30px;padding:9px 16px;font-size:14px;font-weight:500}
+.type-badge svg{width:20px;height:20px}
+.rating-head{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.rating-stars{display:flex;gap:2px}
+.rating-stars svg{width:22px;height:22px}
+.rating-score{font-size:22px;font-weight:900}
+.rating-meta{color:var(--muted);font-size:14px}
+.review-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.review-card{background:#fff;border:1px solid var(--gray-border);border-radius:var(--radius);padding:22px}
+.review-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.review-head .avatar{width:46px;height:46px;font-size:17px}
+.review-name{font-weight:700;font-size:15px}
+.review-dept{color:var(--muted);font-size:13px}
+.review-quote{font-size:15px;color:#444;font-style:italic;margin-bottom:10px}
+.rating{display:flex;gap:3px}
+.rating svg{width:18px;height:18px}
+
+/* ===== FOOTER ===== */
+.footer{background:var(--black);text-align:center;padding:40px 0}
+.footer .brand{color:var(--white);font-weight:700;font-size:17px}
+.footer .sub{color:var(--muted);font-size:13px;margin-top:6px}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;right:24px;z-index:100;background:var(--black);color:#fff;font-size:14px;font-weight:500;padding:14px 18px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.3);display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s ease,transform .25s ease}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast svg{width:20px;height:20px;flex-shrink:0}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .detail-grid{grid-template-columns:1fr;gap:28px}
+  .detail-side{position:static;order:-1}
+  .review-row{grid-template-columns:1fr}
+  .info-top h1{margin-right:60px}
+}
+@media(max-width:760px){
+  .nav-inner{flex-wrap:wrap;height:auto;padding:12px 0;gap:12px}
+  .nav-menu{order:3;width:100%;justify-content:center;margin:0;gap:30px}
+  .nav-link.active::after{bottom:-4px}
+  .nav-right{margin-left:0}
+  .greeting{display:none}
+}
+@media(max-width:480px){
+  .container{padding:0 16px}
+  .detail-wrap{padding:28px 16px 48px}
+  .toast{left:16px;right:16px;bottom:16px}
+}
+</style>
+</head>
+<body>
+<script>
+// ===== Auth: chưa đăng nhập -> login.html =====
+(function(){
+  var raw = localStorage.getItem('lms_user');
+  if(!raw){ window.location.href='login.html'; return; }
+  try{
+    var u = JSON.parse(raw);
+    document.addEventListener('DOMContentLoaded', function(){
+      var greet = document.querySelector('.greeting');
+      if(greet && u.name) greet.innerHTML='Xin chào, <b>'+u.name+'</b>';
+      var av = document.querySelector('.nav-right .avatar');
+      if(av && u.name) av.textContent=u.name.charAt(0).toUpperCase();
+    });
+  }catch(e){}
+})();
+</script>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <img src="mascot.png" alt="Mascot AMELA" class="logo-mascot">
+      <img src="logo.png" alt="AMELA — TEK FOR HUMAN" class="logo-wordmark">
+    </a>
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link">Trang chủ</a>
+      <a href="courses.html" class="nav-link active">Khóa học</a>
+    </div>
+    <div class="nav-right">
+      <div class="avatar">NV</div>
+      <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
+      <button class="btn-logout">Đăng xuất</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== BREADCRUMB ===== -->
+<div class="breadcrumb-bar">
+  <div class="container">
+    <nav class="crumb">
+      <a href="index.html">Trang chủ</a><span class="sep">&rsaquo;</span><a href="courses.html">Khóa học</a><span class="sep">&rsaquo;</span><span class="here" id="crumbCourse">—</span>
+    </nav>
+  </div>
+</div>
+
+<!-- ===== NỘI DUNG 2 CỘT ===== -->
+<main class="detail-wrap">
+  <div class="container">
+    <div class="detail-grid">
+
+      <!-- CỘT TRÁI -->
+      <div class="detail-main">
+        <div class="block">
+          <h2>Bạn sẽ học được gì?</h2>
+          <ul class="obj-list" id="objectives"></ul>
+        </div>
+        <div class="block">
+          <h2>Yêu cầu tham gia</h2>
+          <ul class="req-list" id="requirements"></ul>
+        </div>
+        <div class="block">
+          <h2>Nội dung trong khóa</h2>
+          <div class="type-badges" id="typeBadges"></div>
+        </div>
+        <div class="block">
+          <h2>Đánh giá từ học viên</h2>
+          <div class="rating-head">
+            <span class="rating-stars" id="ratingStars"></span>
+            <span class="rating-score">4.8/5</span>
+            <span class="rating-meta">· (12 đánh giá)</span>
+          </div>
+          <div class="review-row" id="reviewRow"></div>
+        </div>
+      </div>
+
+      <!-- CỘT PHẢI -->
+      <aside class="detail-side">
+        <div class="info-card" id="infoCard"></div>
+        <div class="lessons-card" id="lessonsCard"></div>
+      </aside>
+
+    </div>
+  </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="brand">AMELA Technology © 2026</div>
+    <div class="sub">Hệ thống LMS Nội bộ — Bảo mật</div>
+  </div>
+</footer>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#F5C518" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></g></svg>
+  <span id="toastText">Hoàn thành bài trước để mở khóa</span>
+</div>
+
+<script>
+/* ====== DỮ LIỆU 2 KHÓA HỌC (hardcode demo) ====== */
+const COURSES = {
+  "a-core": {
+    name:"A-CORE", group:"Năng lực cốt lõi AMELA", level:"Cơ bản",
+    duration:"2 giờ", students:87, positions:["Toàn bộ nhân viên"],
+    description:"Khóa học giúp nhân viên hiểu rõ văn hóa, giá trị cốt lõi và cách làm việc đặc trưng tại AMELA Technology.",
+    objectives:[
+      "Hiểu 5 giá trị cốt lõi của AMELA",
+      "Nắm quy trình làm việc nội bộ",
+      "Biết cách sử dụng các công cụ công ty",
+      "Xây dựng mindset phù hợp văn hóa AMELA"
+    ],
+    requirements:[
+      "Là nhân viên chính thức hoặc thử việc",
+      "Hoàn thành khóa Day One trước"
+    ],
+    lessons:[
+      { id:1, title:"Giới thiệu về AMELA",  duration:"20 phút", type:"video",      status:"done" },
+      { id:2, title:"5 giá trị cốt lõi",    duration:"30 phút", type:"video+quiz", status:"doing" },
+      { id:3, title:"Quy trình làm việc",   duration:"25 phút", type:"pdf",        status:"locked" },
+      { id:4, title:"Công cụ nội bộ",       duration:"20 phút", type:"slide",      status:"locked" },
+      { id:5, title:"Kiểm tra cuối khóa",   duration:"25 phút", type:"quiz",       status:"locked" }
+    ]
+  },
+  "day-one": {
+    name:"Day One", group:"Năng lực cốt lõi", level:"Cơ bản",
+    duration:"0.5 giờ", students:95, positions:["Toàn bộ nhân viên mới"],
+    description:"Khóa học định hướng dành cho nhân viên trong ngày đầu tiên tại AMELA.",
+    objectives:[
+      "Nắm thông tin cơ bản về công ty",
+      "Hiểu quy định và chính sách nhân sự",
+      "Biết các đầu mối liên hệ quan trọng"
+    ],
+    requirements:[
+      "Dành cho nhân viên mới (ngày đầu onboarding)"
+    ],
+    lessons:[
+      { id:1, title:"Chào mừng đến AMELA", duration:"30 phút", type:"video+pdf", status:"doing" }
+    ]
+  }
+};
+
+/* ====== ICON SVG ====== */
+var ICON = {
+  clock:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.6V12l3 1.9"/></g></svg>',
+  users:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 6"/><path d="M16.5 13.6a5.5 5.5 0 0 1 4 5.4"/></g></svg>',
+  chart:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="20" x2="5" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="19" y1="20" x2="19" y2="14"/></g></svg>',
+  target:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#555" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="#555" stroke="none"/></g></svg>',
+  tick:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#22A565"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  play:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#F5C518" stroke-width="2"/><path d="M10 8.5l6 3.5-6 3.5z" fill="#F5C518"/></svg>',
+  lock:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#B7B7B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></g></svg>',
+  check:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#F5C518" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  star:'<svg viewBox="0 0 24 24"><path d="M12 17.3l6.18 3.7-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#F5C518" stroke="#1A1A1A" stroke-width="1.4" stroke-linejoin="round"/></svg>',
+  video:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#1A1A1A" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="M17 10l4-2.5v9L17 14z" stroke-linecap="round"/></g></svg>',
+  pdf:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#1A1A1A" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/></g></svg>',
+  slide:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#1A1A1A" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><rect x="3" y="4" width="18" height="13" rx="2"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/></g></svg>',
+  quiz:'<svg viewBox="0 0 24 24"><g fill="none" stroke="#1A1A1A" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 9l2 2 3.5-3.5"/><line x1="8.5" y1="15" x2="15.5" y2="15"/></g></svg>'
+};
+var TYPE_LABEL = { video:"Video", pdf:"PDF", slide:"Slide", quiz:"Bài kiểm tra" };
+var TYPE_ORDER = ["video","pdf","slide","quiz"];
+
+/* ====== Chọn khóa (mặc định A-CORE, hỗ trợ ?course=day-one) ====== */
+var slug = new URLSearchParams(location.search).get('course');
+var course = COURSES[slug] || COURSES["a-core"];
+
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function unlocked(i){ return i===0 || course.lessons[i-1].status === 'done'; }
+
+var total     = course.lessons.length;
+var doneCount = course.lessons.filter(function(l){return l.status==='done';}).length;
+var progress  = Math.round(doneCount / total * 100);
+var started   = progress > 0;
+
+/* ===== Breadcrumb ===== */
+document.getElementById('crumbCourse').textContent = course.name;
+document.title = course.name + ' — AMELA';
+
+/* ===== Thẻ thông tin (cột phải) ===== */
+var lv = course.level === 'Nâng cao' ? 'advanced' : 'basic';
+var infoRows = [
+  [ICON.clock,  'Thời lượng', course.duration],
+  [ICON.users,  'Học viên',   course.students + ' đã tham gia'],
+  [ICON.chart,  'Cấp độ',     course.level],
+  [ICON.target, 'Vị trí',     course.positions.join(', ')]
+];
+document.getElementById('infoCard').innerHTML =
+  '<div class="info-top">'
+  + '<span class="level-badge '+lv+'">'+esc(course.level)+'</span>'
+  + '<h1>'+esc(course.name)+'</h1>'
+  + '<span class="group-badge">'+esc(course.group)+'</span>'
+  + '</div>'
+  + '<div class="info-body">'
+  +   infoRows.map(function(r){
+        return '<div class="info-row"><span class="ico">'+r[0]+'</span>'
+             + '<span class="lbl">'+r[1]+':</span> <span class="val">'+esc(r[2])+'</span></div>';
+      }).join('')
+  +   '<div class="hr"></div>'
+  +   '<div class="desc-label">Mô tả</div>'
+  +   '<div class="desc-text">'+esc(course.description)+'</div>'
+  +   '<div class="hr"></div>'
+  +   '<button class="btn-cta" id="ctaBtn">'+(started?'Tiếp tục học →':'Bắt đầu học →')+'</button>'
+  +   '<div class="progress-wrap"><div class="progress-label">Tiến độ: <b>'+progress+'%</b></div>'
+  +   '<div class="bar"><div class="bar-fill" id="barFill" data-progress="'+progress+'"></div></div></div>'
+  + '</div>';
+
+/* ===== Danh sách bài học (cột phải) ===== */
+function lessonIcon(l,i){
+  if(l.status==='done') return ICON.tick;
+  if(unlocked(i))       return ICON.play;
+  return ICON.lock;
+}
+var lessonsHTML = course.lessons.map(function(l,i){
+  var open = unlocked(i);
+  var cls = 'lesson' + (open ? '' : ' locked') + (l.status==='doing' ? ' doing' : '');
+  return '<button class="'+cls+'" data-idx="'+i+'" data-open="'+open+'">'
+       + '<span class="lesson-ico">'+lessonIcon(l,i)+'</span>'
+       + '<span class="lesson-num">'+(i+1)+'</span>'
+       + '<span class="lesson-title">'+esc(l.title)+'</span>'
+       + '<span class="lesson-dur">'+esc(l.duration)+'</span>'
+       + '</button>';
+}).join('');
+document.getElementById('lessonsCard').innerHTML =
+  '<h2>Nội dung khóa học</h2>'
+  + '<p class="sub">'+total+' bài học · '+esc(course.duration)+'</p>'
+  + lessonsHTML;
+
+/* ===== Cột trái: mục tiêu / yêu cầu / loại nội dung / đánh giá ===== */
+document.getElementById('objectives').innerHTML = course.objectives.map(function(o){
+  return '<li><span class="ic">'+ICON.check+'</span><span>'+esc(o)+'</span></li>';
+}).join('');
+document.getElementById('requirements').innerHTML = course.requirements.map(function(r){
+  return '<li><span class="dot"></span><span>'+esc(r)+'</span></li>';
+}).join('');
+
+var typeSet = {};
+course.lessons.forEach(function(l){ l.type.split('+').forEach(function(t){ typeSet[t]=true; }); });
+document.getElementById('typeBadges').innerHTML = TYPE_ORDER.filter(function(t){return typeSet[t];}).map(function(t){
+  return '<span class="type-badge">'+ICON[t]+TYPE_LABEL[t]+'</span>';
+}).join('');
+
+document.getElementById('ratingStars').innerHTML = ICON.star.repeat(5);
+
+var REVIEWS = [
+  { initial:"An", name:"Nguyễn Văn An", dept:"Phòng Kỹ thuật", quote:"Khóa học rất thực tế, áp dụng được ngay vào công việc hằng ngày." },
+  { initial:"Hà", name:"Trần Thu Hà",   dept:"Phòng Nhân sự",  quote:"Nội dung mạch lạc, ví dụ gần gũi với văn hóa công ty. Rất đáng học!" }
+];
+document.getElementById('reviewRow').innerHTML = REVIEWS.map(function(r){
+  return '<div class="review-card"><div class="review-head"><div class="avatar">'+esc(r.initial)+'</div>'
+       + '<div><div class="review-name">'+esc(r.name)+'</div><div class="review-dept">'+esc(r.dept)+'</div></div></div>'
+       + '<p class="review-quote">"'+esc(r.quote)+'"</p>'
+       + '<div class="rating">'+ICON.star.repeat(5)+'</div></div>';
+}).join('');
+
+/* ===== Tương tác ===== */
+// Toast
+var toast = document.getElementById('toast');
+var toastTimer = null;
+function showToast(msg){
+  document.getElementById('toastText').textContent = msg || 'Hoàn thành bài trước để mở khóa';
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 3000);
+}
+
+// Click bài học
+document.querySelectorAll('.lesson').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    if(btn.getAttribute('data-open') === 'true'){
+      window.location.href = 'lesson.html';
+    } else {
+      showToast('Hoàn thành bài trước để mở khóa');
+    }
+  });
+});
+
+// Nút CTA -> cuộn đến bài đang học / bài đầu tiên
+document.getElementById('ctaBtn').addEventListener('click', function(){
+  var targetIdx = 0;
+  if(started){
+    targetIdx = course.lessons.findIndex(function(l){return l.status==='doing';});
+    if(targetIdx < 0) targetIdx = course.lessons.findIndex(function(l,i){return unlocked(i) && l.status!=='done';});
+    if(targetIdx < 0) targetIdx = 0;
+  }
+  var el = document.querySelector('.lesson[data-idx="'+targetIdx+'"]');
+  if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.transition='background .2s'; }
+});
+
+// Đăng xuất
+document.querySelector('.btn-logout').addEventListener('click', function(){
+  localStorage.removeItem('lms_user');
+  window.location.href = 'login.html';
+});
+
+// Animation progress bar khi load
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    var f = document.getElementById('barFill');
+    if(f) f.style.width = f.getAttribute('data-progress') + '%';
+  }, 250);
+});
+</script>
+
+</body>
+</html>
