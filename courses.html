@@ -202,6 +202,10 @@ body{
     <div class="nav-menu">
       <a href="index.html" class="nav-link">Trang chủ</a>
       <a href="courses.html" class="nav-link active">Khóa học</a>
+      <a href="ebook-library.html"
+         style="color:#FFFFFF;text-decoration:none;font-size:15px;font-weight:500;padding:8px 4px;border-bottom:2px solid transparent;transition:border-color .2s ease;"
+         onmouseover="this.style.borderBottomColor='#F5C518'"
+         onmouseout="this.style.borderBottomColor='transparent'">📚 Thư viện</a>
     </div>
     <div class="nav-right">
       <div class="avatar">NV</div>
@@ -374,6 +378,52 @@ searchInput.addEventListener('input', applyFilters);   // real-time, không cầ
 groupFilter.addEventListener('change', applyFilters);
 posFilter.addEventListener('change', applyFilters);
 clearBtn.addEventListener('click', clearFilters);
+
+// ==== Đọc URL parameter khi được redirect từ trang chủ ====
+(function(){
+  var params = new URLSearchParams(window.location.search);
+
+  // Đọc từ khóa tìm kiếm
+  var keyword = params.get('search');
+  if(keyword){
+    var searchInput = document.querySelector('input[type="text"], .search-input, input[placeholder*="tìm"], input[placeholder*="Tìm"]');
+    if(searchInput){
+      searchInput.value = decodeURIComponent(keyword);
+      searchInput.dispatchEvent(new Event('input'));
+      searchInput.dispatchEvent(new Event('keyup'));
+    }
+  }
+
+  // Đọc nhóm năng lực
+  var group = params.get('group');
+  if(group){
+    var groupMap = {
+      'cot-loi':    'Năng lực cốt lõi',
+      'chuyen-mon': 'Năng lực chuyên môn',
+      'lanh-dao':   'Năng lực lãnh đạo',
+      'ky-nang-mem':'Kỹ năng mềm'
+    };
+    var groupName = groupMap[decodeURIComponent(group)];
+
+    // Tìm trong select dropdown
+    var select = document.querySelector('select');
+    if(select && groupName){
+      for(var i=0; i<select.options.length; i++){
+        if(select.options[i].text.includes(groupName) || select.options[i].value.includes(groupName)){
+          select.selectedIndex = i;
+          select.dispatchEvent(new Event('change'));
+          break;
+        }
+      }
+    }
+
+    // Tìm trong tab button (nếu giao diện dùng tab)
+    var tabs = document.querySelectorAll('.tab-btn, .filter-tab, button[data-category], button[data-group]');
+    tabs.forEach(function(tab){
+      if(tab.textContent.includes(groupName)){ tab.click(); }
+    });
+  }
+})();
 
 // Đăng xuất: xóa phiên và quay về trang đăng nhập
 document.querySelector('.btn-logout').addEventListener('click', function(){

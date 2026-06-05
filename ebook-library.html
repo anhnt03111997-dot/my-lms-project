@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thư viện Ebook — AMELA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+
+:root{
+  --black:#1A1A1A; --black-2:#2A2A2A; --white:#FFFFFF;
+  --yellow:#F5C518; --gray:#F5F5F5; --gray-border:#E2E2E2; --muted:#9A9A9A;
+  --green:#16A34A; --radius:14px; --shadow:0 8px 30px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);line-height:1.6;-webkit-font-smoothing:antialiased}
+.container{max-width:1240px;margin:0 auto;padding:0 24px}
+
+/* ===== NAVBAR ===== */
+.navbar{background:var(--black);position:sticky;top:0;z-index:50;border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;height:70px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo .logo-mascot{height:36px;width:auto;display:block}
+.logo .logo-wordmark{height:30px;width:auto;display:block}
+.nav-menu{display:flex;align-items:center;gap:26px;margin-left:8px}
+.nav-link{color:#C9C9C9;text-decoration:none;font-size:15px;font-weight:500;padding:6px 2px;position:relative;transition:color .2s ease}
+.nav-link:hover{color:var(--white)}
+.nav-link.active{color:var(--yellow);font-weight:700}
+.nav-link.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:3px;background:var(--yellow);border-radius:3px}
+.nav-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.avatar{width:38px;height:38px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--yellow),#d9a800);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--black);font-size:15px}
+.greeting{color:var(--white);font-size:15px}
+.greeting b{font-weight:700}
+.btn-logout{background:transparent;border:1.5px solid var(--yellow);color:var(--yellow);padding:8px 18px;border-radius:30px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s ease}
+.btn-logout:hover{background:var(--yellow);color:var(--black);transform:translateY(-2px)}
+
+/* ===== HEADER ===== */
+.page-head{background:linear-gradient(120deg,var(--black),var(--black-2));padding:40px 0}
+.page-head h1{color:#fff;font-size:28px;font-weight:900;display:flex;align-items:center;gap:10px}
+.page-head p{color:#B9B9B9;font-size:14px;margin-top:6px}
+.page-stats{color:var(--yellow);font-size:13px;font-weight:600;margin-top:10px}
+
+/* ===== FILTER BAR ===== */
+.filter-wrap{background:var(--gray);padding:22px 0;border-bottom:1px solid var(--gray-border)}
+.filter-bar{display:flex;gap:16px;align-items:center}
+.search-box{flex:0 0 40%;position:relative}
+.search-box svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px}
+.search-box input{width:100%;padding:12px 14px 12px 42px;border:1px solid var(--gray-border);border-radius:10px;font-family:inherit;font-size:14px;outline:none;background:#fff}
+.search-box input:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(245,197,24,.18)}
+.tabs{flex:1;display:flex;gap:8px;flex-wrap:wrap}
+.tab{background:#fff;border:1px solid var(--gray-border);color:#444;font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;border-radius:30px;cursor:pointer;transition:all .2s ease;white-space:nowrap}
+.tab:hover{border-color:#ecc94b}
+.tab.active{background:var(--yellow);color:var(--black);font-weight:700;border-color:var(--yellow)}
+.result-count{max-width:1240px;margin:14px auto 0;padding:0 24px;color:var(--muted);font-size:13px}
+
+/* ===== GRID ===== */
+.lib{padding:28px 0 60px}
+.ebook-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px 0;font-size:15px}
+.ecard{background:#fff;border:1px solid var(--gray-border);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:transform .2s ease,box-shadow .2s ease}
+.ecard:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(245,197,24,.25)}
+.ecover{position:relative;height:160px;display:flex;flex-direction:column;justify-content:space-between;padding:14px;color:#fff}
+.ecover .fmt{align-self:flex-end;font-size:11px;font-weight:800;letter-spacing:.5px;padding:3px 9px;border-radius:6px;color:#fff}
+.fmt.pdf{background:#DC2626}.fmt.doc{background:#2563EB}.fmt.epub{background:#7C3AED}.fmt.web{background:#EA580C}
+.ecover .bookicon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;opacity:.92}
+.ecover .etitle{position:relative;font-size:15px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ebody{padding:14px;display:flex;flex-direction:column;gap:7px;flex:1}
+.ecat{align-self:flex-start;background:#FFF8DC;color:#B8860B;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.eauthor{color:var(--muted);font-size:12px}
+.edesc{color:#555;font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.efoot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:8px}
+.eviews{color:var(--muted);font-size:12px;display:flex;align-items:center;gap:4px}
+.btn-read{background:var(--yellow);color:var(--black);border:none;font-family:inherit;font-weight:700;font-size:13px;padding:8px 16px;border-radius:6px;cursor:pointer;transition:all .2s ease}
+.btn-read:hover{background:#e3b500}
+
+/* ===== MODAL ĐỌC ===== */
+.reader{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.9);display:none;flex-direction:column}
+.reader.show{display:flex;animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.reader-bar{display:flex;align-items:center;gap:14px;padding:12px 18px;color:#fff;min-height:64px}
+.reader-info{min-width:0}
+.reader-info .rt{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reader-info .ra{color:#bbb;font-size:12.5px}
+.reader-dl{margin-left:auto;background:var(--yellow);color:#000;text-decoration:none;font-weight:700;font-size:13px;padding:9px 16px;border-radius:8px;white-space:nowrap}
+.reader-close{background:rgba(255,255,255,.12);color:#fff;border:none;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;flex-shrink:0}
+.reader-close:hover{background:rgba(255,255,255,.25)}
+.reader-frame{flex:1;background:#222}
+.reader-frame iframe{width:100%;height:100%;border:0;display:block}
+
+/* ===== ADMIN FAB + PANEL ===== */
+.admin-fab{position:fixed;right:24px;bottom:24px;z-index:999;background:var(--black);color:var(--yellow);border:none;border-radius:50px;padding:14px 22px;box-shadow:0 10px 28px rgba(245,197,24,.35);cursor:pointer;display:none;align-items:center;gap:8px;font-family:inherit;font-weight:700;font-size:15px}
+.admin-fab:hover{transform:translateY(-2px)}
+.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.panel-overlay.open{opacity:1;pointer-events:auto}
+.admin-panel{position:fixed;top:0;right:0;width:420px;max-width:100%;height:100vh;background:#fff;box-shadow:-12px 0 40px rgba(0,0,0,.25);z-index:1001;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column}
+.admin-panel.open{transform:translateX(0)}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--gray-border)}
+.panel-head h2{font-size:17px;font-weight:700}
+.panel-close{background:none;border:none;font-size:20px;cursor:pointer;color:#555}
+.panel-tabs{display:flex;border-bottom:1px solid var(--gray-border)}
+.ptab{flex:1;background:none;border:none;border-bottom:2px solid transparent;padding:13px;font-family:inherit;font-size:14px;font-weight:600;color:#888;cursor:pointer}
+.ptab.active{color:var(--black);border-bottom-color:var(--yellow)}
+.panel-body{flex:1;overflow-y:auto;padding:20px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+.field label .req{color:#DC2626}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--gray-border);border-radius:8px;font-family:inherit;font-size:14px;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--yellow)}
+.field .hint{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.5}
+.presets{display:none;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.presets.show{display:grid}
+.preset{height:38px;border-radius:8px;cursor:pointer;border:3px solid transparent}
+.preset.sel{border-color:var(--yellow)}
+.btn-submit{width:100%;background:var(--yellow);color:var(--black);border:none;font-family:inherit;font-weight:700;font-size:15px;padding:13px;border-radius:10px;cursor:pointer;margin-top:6px}
+.btn-submit:hover{background:#e3b500}
+.etable{width:100%;border-collapse:collapse;font-size:13px}
+.etable th,.etable td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--gray-border);vertical-align:middle}
+.etable th{color:var(--muted);font-weight:600;font-size:12px}
+.etable .acts{display:flex;gap:6px}
+.mini-btn{border:1px solid var(--gray-border);background:#fff;border-radius:6px;padding:5px 9px;font-family:inherit;font-size:12px;cursor:pointer}
+.mini-btn.edit:hover{border-color:var(--yellow)}
+.mini-btn.del:hover{border-color:#DC2626;color:#DC2626}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;left:24px;bottom:24px;z-index:1100;background:var(--green);color:#fff;font-size:14px;font-weight:600;padding:14px 18px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.25);opacity:0;transform:translateY(16px);pointer-events:none;transition:all .25s ease}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.err{background:#DC2626}
+
+/* ===== FOOTER ===== */
+.footer{background:var(--black);text-align:center;padding:36px 0}
+.footer .brand{color:#fff;font-weight:700;font-size:16px}
+.footer .sub{color:var(--muted);font-size:13px;margin-top:6px}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1024px){.ebook-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:768px){
+  .ebook-grid{grid-template-columns:repeat(2,1fr)}
+  .filter-bar{flex-direction:column;align-items:stretch}
+  .search-box{flex:1 1 auto}
+}
+@media(max-width:760px){
+  .nav-inner{flex-wrap:wrap;height:auto;padding:12px 0;gap:12px}
+  .nav-menu{order:3;width:100%;justify-content:center;margin:0;gap:24px}
+  .nav-link.active::after{bottom:-4px}
+  .nav-right{margin-left:0}
+  .greeting{display:none}
+}
+@media(max-width:480px){.ebook-grid{grid-template-columns:1fr 1fr;gap:14px}}
+</style>
+</head>
+<body>
+<script>
+// ===== Auth + hiển thị nút admin theo vai trò =====
+(function(){
+  var raw = localStorage.getItem('lms_user');
+  if(!raw){ window.location.href='login.html'; return; }
+  try{
+    var u = JSON.parse(raw);
+    document.addEventListener('DOMContentLoaded', function(){
+      var greet = document.querySelector('.greeting');
+      if(greet && u.name) greet.innerHTML = 'Xin chào, <b>' + u.name + '</b>';
+      var av = document.querySelector('.nav-right .avatar');
+      if(av && u.name) av.textContent = u.name.charAt(0).toUpperCase();
+      var adminBtn = document.getElementById('admin-panel-btn');
+      if(adminBtn){
+        adminBtn.style.display = (u.role==='admin' || u.role==='teacher') ? 'flex' : 'none';
+      }
+    });
+  }catch(e){}
+})();
+</script>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <img src="mascot.png" alt="Mascot AMELA" class="logo-mascot">
+      <img src="logo.png" alt="AMELA — TEK FOR HUMAN" class="logo-wordmark">
+    </a>
+    <div class="nav-menu">
+      <a href="index.html" class="nav-link">Trang chủ</a>
+      <a href="courses.html" class="nav-link">Khóa học</a>
+      <a href="ebook-library.html" class="nav-link active">Thư viện</a>
+    </div>
+    <div class="nav-right">
+      <div class="avatar">NV</div>
+      <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
+      <button class="btn-logout">Đăng xuất</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HEADER ===== -->
+<header class="page-head">
+  <div class="container">
+    <h1>📚 Thư viện Ebook</h1>
+    <p>Tài liệu học tập được tuyển chọn bởi đội ngũ AMELA</p>
+    <div class="page-stats" id="pageStats">—</div>
+  </div>
+</header>
+
+<!-- ===== FILTER ===== -->
+<div class="filter-wrap">
+  <div class="container">
+    <div class="filter-bar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#F5C518" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></g></svg>
+        <input type="text" id="searchInput" placeholder="Tìm kiếm ebook..." autocomplete="off">
+      </div>
+      <div class="tabs" id="tabs"></div>
+    </div>
+  </div>
+  <div class="result-count" id="resultCount">—</div>
+</div>
+
+<!-- ===== GRID ===== -->
+<main class="lib">
+  <div class="container">
+    <div class="ebook-grid" id="ebookGrid"></div>
+  </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="brand">AMELA Technology © 2026</div>
+    <div class="sub">Hệ thống LMS Nội bộ — Bảo mật</div>
+  </div>
+</footer>
+
+<!-- ===== MODAL ĐỌC EBOOK ===== -->
+<div class="reader" id="reader">
+  <div class="reader-bar">
+    <button class="reader-close" id="readerClose" title="Đóng (ESC)">✕</button>
+    <div class="reader-info">
+      <div class="rt" id="readerTitle">—</div>
+      <div class="ra" id="readerAuthor">—</div>
+    </div>
+    <a class="reader-dl" id="readerDownload" target="_blank" rel="noopener">⬇ Tải về</a>
+  </div>
+  <div class="reader-frame"><iframe id="readerFrame" title="Trình đọc ebook" allow="autoplay"></iframe></div>
+</div>
+
+<!-- ===== ADMIN ===== -->
+<button class="admin-fab" id="admin-panel-btn">⚙️ Quản lý ebook</button>
+<div class="panel-overlay" id="panelOverlay"></div>
+<aside class="admin-panel" id="adminPanel">
+  <div class="panel-head">
+    <h2>📚 Quản lý Thư viện Ebook</h2>
+    <button class="panel-close" id="panelClose">✕</button>
+  </div>
+  <div class="panel-tabs">
+    <button class="ptab active" data-tab="add">Thêm ebook mới</button>
+    <button class="ptab" data-tab="list">Danh sách ebook</button>
+  </div>
+  <div class="panel-body">
+    <!-- Tab thêm/sửa -->
+    <div id="tabAdd">
+      <div class="field">
+        <label>Tên ebook <span class="req">*</span></label>
+        <input type="text" id="f_title" placeholder="VD: Clean Code">
+      </div>
+      <div class="field">
+        <label>Tác giả</label>
+        <input type="text" id="f_author" placeholder="VD: Robert C. Martin">
+      </div>
+      <div class="field">
+        <label>Danh mục <span class="req">*</span></label>
+        <select id="f_category">
+          <option>Năng lực cốt lõi</option>
+          <option>Năng lực chuyên môn</option>
+          <option>Năng lực lãnh đạo</option>
+          <option>Kỹ năng mềm</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Định dạng file <span class="req">*</span></label>
+        <select id="f_format">
+          <option value="PDF">PDF</option>
+          <option value="DOCX">DOCX</option>
+          <option value="EPUB">EPUB</option>
+          <option value="Link">Link web</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Link Google Drive hoặc URL <span class="req">*</span></label>
+        <input type="text" id="f_link" placeholder="https://drive.google.com/file/d/...">
+        <div class="hint">💡 Google Drive: chuột phải file → Chia sẻ → Sao chép liên kết → Paste vào đây</div>
+      </div>
+      <div class="field">
+        <label>Mô tả ngắn</label>
+        <textarea id="f_desc" rows="3" placeholder="Mô tả nội dung ebook..."></textarea>
+      </div>
+      <div class="field">
+        <label>Thumbnail / Cover</label>
+        <select id="f_thumb">
+          <option value="default">Mặc định theo danh mục</option>
+          <option value="custom">Tùy chỉnh màu</option>
+        </select>
+        <div class="presets" id="presets"></div>
+      </div>
+      <button class="btn-submit" id="submitBtn">➕ Thêm vào thư viện</button>
+    </div>
+    <!-- Tab danh sách -->
+    <div id="tabList" style="display:none">
+      <table class="etable">
+        <thead><tr><th>Tên</th><th>Danh mục</th><th>Định dạng</th><th>Hành động</th></tr></thead>
+        <tbody id="ebookTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== DỮ LIỆU MẶC ĐỊNH ===== */
+var DEFAULT_EBOOKS = [
+  { id:"eb001", title:"Clean Code", author:"Robert C. Martin", category:"Năng lực chuyên môn", format:"PDF", link:"https://drive.google.com/file/d/SAMPLE_ID_1/preview", description:"Hướng dẫn viết code sạch, dễ đọc và dễ bảo trì cho developer.", views:142 },
+  { id:"eb002", title:"The Lean Startup", author:"Eric Ries", category:"Năng lực lãnh đạo", format:"EPUB", link:"https://drive.google.com/file/d/SAMPLE_ID_2/preview", description:"Phương pháp khởi nghiệp tinh gọn và tư duy đổi mới sáng tạo.", views:98 },
+  { id:"eb003", title:"Atomic Habits", author:"James Clear", category:"Kỹ năng mềm", format:"PDF", link:"https://drive.google.com/file/d/SAMPLE_ID_3/preview", description:"Xây dựng thói quen tốt và loại bỏ thói quen xấu hiệu quả.", views:215 },
+  { id:"eb004", title:"The Culture Code", author:"Daniel Coyle", category:"Năng lực cốt lõi", format:"PDF", link:"https://drive.google.com/file/d/SAMPLE_ID_4/preview", description:"Bí quyết xây dựng văn hóa tổ chức xuất sắc từ các công ty hàng đầu.", views:76 },
+  { id:"eb005", title:"Deep Work", author:"Cal Newport", category:"Kỹ năng mềm", format:"DOCX", link:"https://drive.google.com/file/d/SAMPLE_ID_5/preview", description:"Rèn luyện khả năng tập trung sâu để đạt năng suất tối đa.", views:189 },
+  { id:"eb006", title:"Project Management Handbook", author:"AMELA L&D Team", category:"Năng lực chuyên môn", format:"PDF", link:"https://drive.google.com/file/d/SAMPLE_ID_6/preview", description:"Cẩm nang quản lý dự án IT cho BrSE và Project Manager.", views:134 },
+  { id:"eb007", title:"Leaders Eat Last", author:"Simon Sinek", category:"Năng lực lãnh đạo", format:"PDF", link:"https://drive.google.com/file/d/SAMPLE_ID_7/preview", description:"Triết lý lãnh đạo lấy con người làm trung tâm.", views:87 },
+  { id:"eb008", title:"AMELA Onboarding Guide", author:"AMELA HR Team", category:"Năng lực cốt lõi", format:"PDF", link:"https://drive.google.com/file/d/SAMPLE_ID_8/preview", description:"Tài liệu hướng dẫn hội nhập dành cho nhân viên mới AMELA.", views:203 }
+];
+
+/* ===== CATEGORY & FORMAT ===== */
+var CATEGORIES = ["Năng lực cốt lõi","Năng lực chuyên môn","Năng lực lãnh đạo","Kỹ năng mềm"];
+var CAT_GRAD = {
+  "Năng lực cốt lõi":   "linear-gradient(135deg,#1A1A2E,#16213E)",
+  "Năng lực chuyên môn":"linear-gradient(135deg,#0D4F3C,#1B6B50)",
+  "Năng lực lãnh đạo":  "linear-gradient(135deg,#4A1942,#6B2D67)",
+  "Kỹ năng mềm":        "linear-gradient(135deg,#1A3A5C,#2E5F8E)"
+};
+var PRESETS = [
+  "linear-gradient(135deg,#1A1A2E,#16213E)",
+  "linear-gradient(135deg,#0D4F3C,#1B6B50)",
+  "linear-gradient(135deg,#4A1942,#6B2D67)",
+  "linear-gradient(135deg,#1A3A5C,#2E5F8E)",
+  "linear-gradient(135deg,#B8860B,#F5C518)",
+  "linear-gradient(135deg,#7A2E2E,#C0392B)"
+];
+function fmtBadge(f){
+  if(f==='PDF')  return ['pdf','PDF'];
+  if(f==='DOCX') return ['doc','DOC'];
+  if(f==='EPUB') return ['epub','EPUB'];
+  return ['web','WEB'];
+}
+function coverGrad(eb){ return eb.gradient || CAT_GRAD[eb.category] || CAT_GRAD["Năng lực cốt lõi"]; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+/* ===== Link Google Drive ===== */
+function driveId(link){
+  var m = link.match(/\/d\/([^/]+)/) || link.match(/[?&]id=([^&]+)/);
+  return m ? m[1] : null;
+}
+function toPreview(link){
+  var id = driveId(link);
+  if(id && link.indexOf('drive.google.com')>-1) return 'https://drive.google.com/file/d/'+id+'/preview';
+  return link;
+}
+function toDownload(link){
+  var id = driveId(link);
+  if(id && link.indexOf('drive.google.com')>-1) return 'https://drive.google.com/file/d/'+id+'/view';
+  return link;
+}
+function validUrl(s){ try{ new URL(s); return true; }catch(e){ return false; } }
+
+/* ===== STORAGE ===== */
+function loadEbooks(){
+  try{ var d=JSON.parse(localStorage.getItem('lms_ebooks')); if(Array.isArray(d)&&d.length) return d; }catch(e){}
+  return DEFAULT_EBOOKS.slice();
+}
+function saveEbooks(){ localStorage.setItem('lms_ebooks', JSON.stringify(ebooks)); }
+var ebooks = loadEbooks();
+
+/* ===== STATE ===== */
+var activeCat = 'all';
+var keyword = '';
+var editingId = null;
+var selectedPreset = null;
+
+/* ===== TABS LỌC ===== */
+(function(){
+  var tabs = document.getElementById('tabs');
+  var list = [['all','Tất cả']].concat(CATEGORIES.map(function(c){return [c,c];}));
+  tabs.innerHTML = list.map(function(t,i){
+    return '<button class="tab'+(i===0?' active':'')+'" data-cat="'+esc(t[0])+'">'+esc(t[1])+'</button>';
+  }).join('');
+  tabs.addEventListener('click', function(e){
+    var b = e.target.closest('.tab'); if(!b) return;
+    tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
+    b.classList.add('active');
+    activeCat = b.getAttribute('data-cat');
+    renderGrid();
+  });
+})();
+document.getElementById('searchInput').addEventListener('input', function(){
+  keyword = this.value.trim().toLowerCase();
+  renderGrid();
+});
+
+/* ===== RENDER GRID ===== */
+function renderGrid(){
+  var grid = document.getElementById('ebookGrid');
+  var filtered = ebooks.filter(function(eb){
+    var matchCat = activeCat==='all' || eb.category===activeCat;
+    var hay = (eb.title+' '+eb.author+' '+eb.description).toLowerCase();
+    var matchKw = !keyword || hay.indexOf(keyword)>-1;
+    return matchCat && matchKw;
+  });
+  if(!filtered.length){
+    grid.innerHTML = '<div class="empty">Không tìm thấy ebook phù hợp.</div>';
+  } else {
+    grid.innerHTML = filtered.map(function(eb){
+      var fb = fmtBadge(eb.format);
+      return '<div class="ecard">'
+        + '<div class="ecover" style="background:'+coverGrad(eb)+'">'
+        +   '<span class="fmt '+fb[0]+'">'+fb[1]+'</span>'
+        +   '<span class="bookicon">📖</span>'
+        +   '<div class="etitle">'+esc(eb.title)+'</div>'
+        + '</div>'
+        + '<div class="ebody">'
+        +   '<span class="ecat">'+esc(eb.category)+'</span>'
+        +   '<span class="eauthor">✍️ '+esc(eb.author||'—')+'</span>'
+        +   '<span class="edesc">'+esc(eb.description||'')+'</span>'
+        +   '<div class="efoot"><span class="eviews">👁 '+(eb.views||0)+'</span>'
+        +   '<button class="btn-read" data-id="'+esc(eb.id)+'">Đọc ngay →</button></div>'
+        + '</div></div>';
+    }).join('');
+  }
+  // stats
+  var cats = {}; ebooks.forEach(function(e){ cats[e.category]=1; });
+  document.getElementById('pageStats').textContent = ebooks.length + ' ebook · ' + Object.keys(cats).length + ' danh mục';
+  document.getElementById('resultCount').textContent = 'Hiển thị ' + filtered.length + '/' + ebooks.length + ' ebook';
+}
+renderGrid();
+
+/* ===== MỞ MODAL ĐỌC ===== */
+var reader = document.getElementById('reader');
+document.getElementById('ebookGrid').addEventListener('click', function(e){
+  var b = e.target.closest('.btn-read'); if(!b) return;
+  openReader(b.getAttribute('data-id'));
+});
+function openReader(id){
+  var eb = ebooks.find(function(x){return x.id===id;}); if(!eb) return;
+  eb.views = (eb.views||0) + 1; saveEbooks(); renderGrid(); renderTable();
+  document.getElementById('readerTitle').textContent = eb.title;
+  document.getElementById('readerAuthor').textContent = '✍️ ' + (eb.author||'—');
+  document.getElementById('readerDownload').href = toDownload(eb.link);
+  document.getElementById('readerFrame').src = toPreview(eb.link);
+  reader.classList.add('show');
+}
+function closeReader(){
+  reader.classList.remove('show');
+  document.getElementById('readerFrame').src = '';
+}
+document.getElementById('readerClose').addEventListener('click', closeReader);
+reader.addEventListener('click', function(e){ if(e.target===reader) closeReader(); });
+document.addEventListener('keydown', function(e){ if(e.key==='Escape' && reader.classList.contains('show')) closeReader(); });
+
+/* ===== ADMIN PANEL ===== */
+var panel = document.getElementById('adminPanel');
+var overlay = document.getElementById('panelOverlay');
+function openPanel(){ panel.classList.add('open'); overlay.classList.add('open'); renderTable(); }
+function closePanel(){ panel.classList.remove('open'); overlay.classList.remove('open'); }
+document.getElementById('admin-panel-btn').addEventListener('click', openPanel);
+document.getElementById('panelClose').addEventListener('click', closePanel);
+overlay.addEventListener('click', closePanel);
+
+// chuyển tab trong panel
+document.querySelectorAll('.ptab').forEach(function(t){
+  t.addEventListener('click', function(){
+    document.querySelectorAll('.ptab').forEach(function(x){x.classList.remove('active');});
+    t.classList.add('active');
+    var which = t.getAttribute('data-tab');
+    document.getElementById('tabAdd').style.display  = which==='add'  ? '' : 'none';
+    document.getElementById('tabList').style.display = which==='list' ? '' : 'none';
+    if(which==='list') renderTable();
+  });
+});
+function showAddTab(){ document.querySelector('.ptab[data-tab="add"]').click(); }
+function showListTab(){ document.querySelector('.ptab[data-tab="list"]').click(); }
+
+/* ===== PRESET MÀU ===== */
+(function(){
+  var box = document.getElementById('presets');
+  box.innerHTML = PRESETS.map(function(g,i){
+    return '<div class="preset" data-i="'+i+'" style="background:'+g+'"></div>';
+  }).join('');
+  box.addEventListener('click', function(e){
+    var p = e.target.closest('.preset'); if(!p) return;
+    box.querySelectorAll('.preset').forEach(function(x){x.classList.remove('sel');});
+    p.classList.add('sel');
+    selectedPreset = PRESETS[+p.getAttribute('data-i')];
+  });
+})();
+document.getElementById('f_thumb').addEventListener('change', function(){
+  var box = document.getElementById('presets');
+  if(this.value==='custom'){ box.classList.add('show'); }
+  else { box.classList.remove('show'); selectedPreset=null; box.querySelectorAll('.preset').forEach(function(x){x.classList.remove('sel');}); }
+});
+
+/* ===== THÊM / SỬA ===== */
+function resetForm(){
+  editingId = null; selectedPreset = null;
+  ['f_title','f_author','f_link','f_desc'].forEach(function(id){ document.getElementById(id).value=''; });
+  document.getElementById('f_category').selectedIndex = 0;
+  document.getElementById('f_format').selectedIndex = 0;
+  document.getElementById('f_thumb').value = 'default';
+  document.getElementById('presets').classList.remove('show');
+  document.getElementById('presets').querySelectorAll('.preset').forEach(function(x){x.classList.remove('sel');});
+  document.getElementById('submitBtn').textContent = '➕ Thêm vào thư viện';
+}
+document.getElementById('submitBtn').addEventListener('click', function(){
+  var title = document.getElementById('f_title').value.trim();
+  var author = document.getElementById('f_author').value.trim();
+  var category = document.getElementById('f_category').value;
+  var format = document.getElementById('f_format').value;
+  var link = document.getElementById('f_link').value.trim();
+  var desc = document.getElementById('f_desc').value.trim();
+  var thumb = document.getElementById('f_thumb').value;
+
+  if(!title){ toast('Vui lòng nhập tên ebook', true); return; }
+  if(!link){ toast('Vui lòng nhập link', true); return; }
+  if(!validUrl(link)){ toast('Link không hợp lệ', true); return; }
+
+  var gradient = (thumb==='custom' && selectedPreset) ? selectedPreset : null;
+
+  if(editingId){
+    var eb = ebooks.find(function(x){return x.id===editingId;});
+    if(eb){ eb.title=title; eb.author=author; eb.category=category; eb.format=format; eb.link=link; eb.description=desc; eb.gradient=gradient; }
+    toast('✅ Đã cập nhật ebook!');
+  } else {
+    ebooks.unshift({ id:'eb'+Date.now(), title:title, author:author, category:category, format:format, link:link, description:desc, views:0, gradient:gradient });
+    toast('✅ Đã thêm ebook thành công!');
+  }
+  saveEbooks(); renderGrid(); renderTable(); resetForm();
+});
+
+/* ===== BẢNG DANH SÁCH ===== */
+function renderTable(){
+  var tb = document.getElementById('ebookTableBody');
+  if(!tb) return;
+  tb.innerHTML = ebooks.map(function(eb){
+    return '<tr><td>'+esc(eb.title)+'</td><td>'+esc(eb.category)+'</td><td>'+esc(eb.format)+'</td>'
+      + '<td><div class="acts"><button class="mini-btn edit" data-id="'+esc(eb.id)+'">✏️ Sửa</button>'
+      + '<button class="mini-btn del" data-id="'+esc(eb.id)+'">🗑️ Xóa</button></div></td></tr>';
+  }).join('');
+}
+document.getElementById('ebookTableBody').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  var id = b.getAttribute('data-id');
+  if(b.classList.contains('edit')){
+    var eb = ebooks.find(function(x){return x.id===id;}); if(!eb) return;
+    editingId = id;
+    document.getElementById('f_title').value = eb.title||'';
+    document.getElementById('f_author').value = eb.author||'';
+    document.getElementById('f_category').value = eb.category;
+    document.getElementById('f_format').value = (['PDF','DOCX','EPUB'].indexOf(eb.format)>-1)? eb.format : 'Link';
+    document.getElementById('f_link').value = eb.link||'';
+    document.getElementById('f_desc').value = eb.description||'';
+    if(eb.gradient){
+      document.getElementById('f_thumb').value='custom';
+      var box=document.getElementById('presets'); box.classList.add('show');
+      box.querySelectorAll('.preset').forEach(function(x){ x.classList.toggle('sel', PRESETS[+x.getAttribute('data-i')]===eb.gradient); });
+      selectedPreset = eb.gradient;
+    } else {
+      document.getElementById('f_thumb').value='default';
+      document.getElementById('presets').classList.remove('show'); selectedPreset=null;
+    }
+    document.getElementById('submitBtn').textContent = '💾 Lưu thay đổi';
+    showAddTab();
+  } else if(b.classList.contains('del')){
+    var t = ebooks.find(function(x){return x.id===id;});
+    if(confirm('Xóa ebook "'+(t?t.title:'')+'"? Không thể hoàn tác.')){
+      ebooks = ebooks.filter(function(x){return x.id!==id;});
+      saveEbooks(); renderGrid(); renderTable();
+      if(editingId===id) resetForm();
+      toast('🗑️ Đã xóa ebook');
+    }
+  }
+});
+
+/* ===== TOAST ===== */
+var toastTimer=null;
+function toast(msg, isErr){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr?' err':'');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.className='toast'+(isErr?' err':''); }, 3000);
+}
+
+/* ===== ĐĂNG XUẤT ===== */
+document.querySelector('.btn-logout').addEventListener('click', function(){
+  localStorage.removeItem('lms_user');
+  window.location.href = 'login.html';
+});
+</script>
+</body>
+</html>

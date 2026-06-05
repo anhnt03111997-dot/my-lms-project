@@ -237,6 +237,112 @@ section{padding:64px 0}
 .btn-action.orange{background:var(--orange);color:var(--white)}
 .btn-action.orange:hover{background:#e0700f;transform:translateY(-2px)}
 
+/* ============ DASHBOARD: XẾP HẠNG + KHÓA HỌC CỦA TÔI ============ */
+/* --- Bố cục nền tảng (không đổi giữa 2 phương án) --- */
+.dashboard{position:relative;overflow:hidden}
+.dashboard .container{position:relative;z-index:1}              /* nội dung luôn nằm trên canvas confetti */
+.confetti{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.dash-grid{display:grid;grid-template-columns:2fr 1fr;gap:30px;align-items:start}
+.dash-head h3{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.dash-head p{font-size:14px;margin:2px 0 18px}
+
+/* --- Leaderboard: bố cục + podium (căn đáy) --- */
+.lb-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.lb-card{flex:1 1 calc(20% - 12px);min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;transition:all .2s ease;height:140px;padding:16px 12px;border-radius:16px}
+.lb-card:hover{transform:translateY(-4px)}
+.lb-rank{line-height:1;font-size:34px}
+.lb-rank.num{border-radius:50%;background:#E5E7EB;color:#6B7280;font-weight:900;display:flex;align-items:center;justify-content:center;width:42px;height:42px;font-size:24px}
+.lb-av{border-radius:50%;background:linear-gradient(135deg,var(--yellow),#F97316);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;width:40px;height:40px;font-size:16px}
+.lb-name{font-weight:700;width:100%;max-width:100%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+.lb-pts{background:#FFF8DC;color:#B8860B;font-weight:700;padding:3px 10px;border-radius:20px;font-size:12px}
+
+/* --- Kích thước giảm dần theo hạng (hiệu ứng podium) --- */
+.lb-r1{height:160px;padding:20px 16px;border-radius:20px;box-shadow:0 8px 24px rgba(245,197,24,.3);transform-origin:bottom center}
+.lb-r1 .lb-rank{font-size:44px}
+.lb-r1 .lb-av{width:52px;height:52px;font-size:20px}
+.lb-r1 .lb-name{font-size:14px}
+.lb-r1 .lb-pts{font-size:13px}
+.lb-r2{height:144px;padding:18px 14px;border-radius:18px}
+.lb-r2 .lb-rank{font-size:38px}
+.lb-r2 .lb-av{width:46px;height:46px;font-size:18px}
+.lb-r2 .lb-name{font-size:13px}
+.lb-r2 .lb-pts{font-size:12px}
+.lb-r3{height:132px;padding:16px 12px;border-radius:16px}
+.lb-r3 .lb-rank{font-size:34px}
+.lb-r3 .lb-av{width:42px;height:42px;font-size:16px}
+.lb-r3 .lb-name{font-size:13px}
+.lb-r3 .lb-pts{font-size:12px}
+.lb-r4{height:120px;padding:14px 10px;border-radius:14px}
+.lb-r4 .lb-rank.num{width:40px;height:40px;font-size:24px}
+.lb-r4 .lb-av{width:38px;height:38px;font-size:15px}
+.lb-r4 .lb-name{font-size:12px}
+.lb-r4 .lb-pts{font-size:11px}
+.lb-r5{height:110px;padding:12px 10px;border-radius:12px}
+.lb-r5 .lb-rank.num{width:36px;height:36px;font-size:22px}
+.lb-r5 .lb-av{width:34px;height:34px;font-size:14px}
+.lb-r5 .lb-name{font-size:12px}
+.lb-r5 .lb-pts{font-size:11px}
+
+/* --- My courses list --- */
+.mc-head{font-size:16px;font-weight:700;margin-bottom:14px}
+.my-course{display:flex;align-items:center;gap:12px;background:#fff;border-radius:10px;height:72px;padding:10px 14px;margin-bottom:8px;border-left:3px solid transparent;transition:all .2s ease;cursor:pointer}
+.my-course:hover{border-left-color:var(--yellow);background:#FFFBEB}
+.mc-bar{width:8px;align-self:stretch;border-radius:6px;flex-shrink:0}
+.mc-bar.learning{background:var(--yellow)}
+.mc-bar.waiting{background:#F97316}
+.mc-bar.notstarted{background:#D1D5DB}
+.mc-bar.done{background:#22C55E}
+.mc-body{flex:1;min-width:0}
+.mc-name{font-size:13px;font-weight:700;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-prog{display:flex;align-items:center;gap:8px;margin-top:6px}
+.mc-track{flex:1;height:6px;background:var(--gray);border-radius:6px;overflow:hidden}
+.mc-fill{height:100%;width:0;background:var(--yellow);border-radius:6px;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.mc-pct{font-size:11px;color:#999;flex-shrink:0}
+.mc-status{font-size:11px;font-weight:700;flex-shrink:0}
+.mc-status.learning{color:#2D7FF9}
+.mc-status.waiting{color:#F97316}
+.mc-status.notstarted{color:#9A9A9A}
+.mc-status.done{color:#22C55E}
+
+/* =================================================================
+   GIAO DIỆN BẢNG XẾP HẠNG — CHỌN 1 TRONG 2 PHƯƠNG ÁN
+   Để bật phương án nào: xóa comment của phương án đó, comment lại cái kia.
+   Mặc định: PHƯƠNG ÁN B (pháo giấy) đang bật.
+   ================================================================= */
+
+/* ===== PHƯƠNG ÁN A: Không nền =====
+.dashboard{background:transparent;animation:none}
+.dash-head h3{color:#1A1A1A}
+.dash-head p{color:#6B7280}
+.mc-head{color:#1A1A1A}
+.lb-card{background:#fff;border:1px solid #E5E7EB;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.my-course{border:1px solid #E5E7EB}
+.confetti{display:none}
+===== HẾT PHƯƠNG ÁN A ===== */
+
+/* ===== PHƯƠNG ÁN B: Pháo giấy (ĐANG BẬT) ===== */
+.dashboard{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);background-size:220% 220%;animation:dashShimmer 14s ease infinite}
+@keyframes dashShimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.dash-head h3{color:var(--yellow)}
+.dash-head p{color:rgba(255,255,255,.8)}
+.mc-head{color:#fff}
+.lb-card{background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.confetti{display:block}
+/* ===== HẾT PHƯƠNG ÁN B ===== */
+
+@media(max-width:1024px){
+  .lb-card{flex:1 1 calc(33.333% - 8px)}
+}
+@media(max-width:900px){
+  .dash-grid{grid-template-columns:1fr;gap:26px}
+}
+@media(max-width:768px){
+  .lb-row{flex-direction:column;align-items:stretch}
+  .lb-card,.lb-r1,.lb-r2,.lb-r3,.lb-r4,.lb-r5{flex:1 1 auto;height:auto;flex-direction:row;justify-content:flex-start;gap:14px;text-align:left;padding:12px 14px}
+  .lb-rank,.lb-r1 .lb-rank,.lb-r2 .lb-rank,.lb-r3 .lb-rank{font-size:28px;width:auto}
+  .lb-name{flex:1;text-align:left}
+}
+
 /* ============ 4. DANH MỤC ============ */
 .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 .cat-card{
@@ -354,19 +460,65 @@ section{padding:64px 0}
 </head>
 <body>
 <script>
-(function(){
-  var user = localStorage.getItem('lms_user');
-  if(!user){ window.location.href = 'login.html'; return; }
-  try {
-    var u = JSON.parse(user);
-    document.addEventListener('DOMContentLoaded', function(){
-      var greet = document.querySelector('.greeting');
-      if(greet && u.name){ greet.innerHTML = 'Xin chào, <b>' + u.name + '</b>'; }
-      var av = document.querySelector('.avatar');
-      if(av && u.name){ av.textContent = u.name.charAt(0).toUpperCase(); }
-    });
-  } catch(e){}
-})();
+// Chuẩn hóa tên hiển thị (tên thật giữ nguyên, email -> tên đẹp) — global, dùng cho leaderboard + guard
+function formatDisplayName(nameOrEmail){
+  if(!nameOrEmail) return 'Học viên';
+  if(nameOrEmail.includes('@')){
+    var localPart = nameOrEmail.split('@')[0];
+    return localPart.replace(/[._-]/g,' ').replace(/\b\w/g,function(c){ return c.toUpperCase(); });
+  }
+  return nameOrEmail;
+}
+</script>
+
+<!-- Bảo vệ trang + đăng xuất bằng Firebase (ES module) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDx85zsy3UfYyjV9raZLY0knwIwho8UhLg",
+  authDomain: "amela-lms.firebaseapp.com",
+  projectId: "amela-lms",
+  storageBucket: "amela-lms.firebasestorage.app",
+  messagingSenderId: "833013103244",
+  appId: "1:833013103244:web:80ea9e14f887b50e4bd9a9"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Kiểm tra đăng nhập khi load trang
+onAuthStateChanged(auth, function(user){
+  if(!user){
+    window.location.href = 'login.html';   // chưa đăng nhập -> về login
+  } else {
+    const stored = localStorage.getItem('lms_user');
+    if(stored){
+      try{
+        const u = JSON.parse(stored);
+        const name = (typeof formatDisplayName === 'function') ? formatDisplayName(u.name) : u.name;
+        const greet = document.querySelector('.greeting');
+        if(greet && u.name){ greet.innerHTML = 'Xin chào, <b>' + name + '</b>'; }
+        const av = document.querySelector('.nav-right .avatar');
+        if(av && u.name){ av.textContent = name.charAt(0).toUpperCase(); }
+      }catch(e){}
+    }
+  }
+});
+
+// Đăng xuất thật bằng Firebase signOut
+function handleLogout(){
+  signOut(auth).then(function(){
+    localStorage.removeItem('lms_user');
+    window.location.href = 'login.html';
+  }).catch(function(error){
+    console.error('Lỗi đăng xuất:', error);
+    localStorage.removeItem('lms_user');
+    window.location.href = 'login.html';
+  });
+}
+var logoutBtn = document.querySelector('.btn-logout');
+if(logoutBtn){ logoutBtn.addEventListener('click', handleLogout); }
 </script>
 
 <!-- ============ 1. NAVBAR ============ -->
@@ -379,6 +531,10 @@ section{padding:64px 0}
     <div class="nav-menu">
       <a href="index.html" class="nav-link active">Trang chủ</a>
       <a href="courses.html" class="nav-link">Khóa học</a>
+      <a href="ebook-library.html"
+         style="color:#FFFFFF;text-decoration:none;font-size:15px;font-weight:500;padding:8px 4px;border-bottom:2px solid transparent;transition:border-color .2s ease;"
+         onmouseover="this.style.borderBottomColor='#F5C518'"
+         onmouseout="this.style.borderBottomColor='transparent'">📚 Thư viện</a>
     </div>
     <div class="nav-right">
       <div class="avatar">NV</div>
@@ -398,7 +554,6 @@ section{padding:64px 0}
         <span class="hw-main">AMELA</span>
         <span class="hw-sub3">Nơi mỗi thành viên trở thành phiên bản tốt hơn mỗi ngày</span>
       </h1>
-      <button class="btn-primary" onclick="window.location.href='courses.html'">Khám phá khóa học →</button>
     </div>
     <div class="hero-mascot">
       <img src="mascot.png" alt="Mascot">
@@ -414,7 +569,7 @@ section{padding:64px 0}
         <span class="search-ico">
           <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="#1A1A1A" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></g></svg>
         </span>
-        <input type="text" id="courseSearch" class="search-input" placeholder="Tìm khóa học theo tên...">
+        <input type="text" id="courseSearch" class="search-input" placeholder="Tìm khóa học theo tên..." onkeypress="if(event.key==='Enter') handleSearch()">
       </div>
       <select id="groupFilter" class="search-select" aria-label="Lọc theo nhóm năng lực">
         <option value="">Tất cả nhóm năng lực</option>
@@ -423,49 +578,58 @@ section{padding:64px 0}
         <option value="lanh-dao">Năng lực lãnh đạo</option>
         <option value="ky-nang-mem">Kỹ năng mềm</option>
       </select>
-      <button class="search-btn" id="searchBtn">Tìm kiếm</button>
+      <button class="search-btn" id="searchBtn" onclick="handleSearch()">Tìm kiếm</button>
     </div>
     <p class="search-empty" id="searchEmpty" hidden>Không tìm thấy khóa học phù hợp.</p>
   </div>
 </section>
 
 <!-- ============ 3. KHÓA HỌC CỦA TÔI ============ -->
-<section class="bg-gray">
+<section class="dashboard">
+  <canvas class="confetti" id="confetti"></canvas>
   <div class="container">
-    <div class="section-head">
-      <h2>Khóa học của tôi</h2>
-      <p>Tiếp tục từ nơi bạn đã dừng</p>
-    </div>
-    <div class="course-grid">
+    <div class="dash-grid">
 
-      <!-- Card 1 -->
-      <div class="course-card" data-group="ky-nang-mem">
-        <span class="dept-badge">Phòng Kỹ thuật</span>
-        <h3>Kỹ năng giao tiếp trong công việc</h3>
-        <span class="status learning">Đang học</span>
-        <div class="progress-row"><span>Tiến độ</span><b>60%</b></div>
-        <div class="progress-track"><div class="progress-fill" data-progress="60"></div></div>
-        <button class="btn-action yellow" onclick="window.location.href='courses.html'">Tiếp tục học</button>
+      <!-- Cột trái (2/3): Bảng xếp hạng Top 5 -->
+      <div>
+        <div class="dash-head">
+          <h3>🏆 Bảng xếp hạng học tập</h3>
+          <p>Top 5 thành viên tích cực tháng này</p>
+        </div>
+        <div class="lb-row" id="lbRow"><!-- render bằng JS --></div>
       </div>
 
-      <!-- Card 2 -->
-      <div class="course-card" data-group="cot-loi">
-        <span class="dept-badge">Phòng Nhân sự</span>
-        <h3>Quy trình onboarding nhân viên mới</h3>
-        <span class="status waiting">Chờ thi</span>
-        <div class="progress-row"><span>Tiến độ</span><b>100%</b></div>
-        <div class="progress-track"><div class="progress-fill" data-progress="100"></div></div>
-        <button class="btn-action orange" onclick="window.location.href='courses.html'">Làm bài kiểm tra</button>
-      </div>
+      <!-- Cột phải (1/3): Khóa học của tôi (list dọc) -->
+      <div>
+        <div class="mc-head">📚 Khóa học của tôi</div>
 
-      <!-- Card 3 -->
-      <div class="course-card" data-group="chuyen-mon">
-        <span class="dept-badge">Phòng Kinh doanh</span>
-        <h3>Kỹ năng đàm phán &amp; chốt deal</h3>
-        <span class="status notstarted">Chưa bắt đầu</span>
-        <div class="progress-row"><span>Tiến độ</span><b>0%</b></div>
-        <div class="progress-track"><div class="progress-fill" data-progress="0"></div></div>
-        <button class="btn-action yellow" onclick="window.location.href='courses.html'">Bắt đầu ngay</button>
+        <div class="my-course" data-course-id="ky-nang-giao-tiep" onclick="window.location.href='course-detail.html?id='+this.dataset.courseId">
+          <span class="mc-bar learning"></span>
+          <div class="mc-body">
+            <div class="mc-name">Kỹ năng giao tiếp trong công việc</div>
+            <div class="mc-prog"><div class="mc-track"><div class="mc-fill" data-progress="60"></div></div><span class="mc-pct">60%</span></div>
+          </div>
+          <span class="mc-status learning">Đang học</span>
+        </div>
+
+        <div class="my-course" data-course-id="onboarding" onclick="window.location.href='course-detail.html?id='+this.dataset.courseId">
+          <span class="mc-bar waiting"></span>
+          <div class="mc-body">
+            <div class="mc-name">Quy trình onboarding nhân viên mới</div>
+            <div class="mc-prog"><div class="mc-track"><div class="mc-fill" data-progress="100"></div></div><span class="mc-pct">100%</span></div>
+          </div>
+          <span class="mc-status waiting">Chờ thi</span>
+        </div>
+
+        <div class="my-course" data-course-id="dam-phan" onclick="window.location.href='course-detail.html?id='+this.dataset.courseId">
+          <span class="mc-bar notstarted"></span>
+          <div class="mc-body">
+            <div class="mc-name">Kỹ năng đàm phán &amp; chốt deal</div>
+            <div class="mc-prog"><div class="mc-track"><div class="mc-fill" data-progress="0"></div></div><span class="mc-pct">0%</span></div>
+          </div>
+          <span class="mc-status notstarted">Chưa bắt đầu</span>
+        </div>
+
       </div>
 
     </div>
@@ -480,7 +644,7 @@ section{padding:64px 0}
       <p>Lựa chọn lộ trình theo nhóm năng lực</p>
     </div>
     <div class="cat-grid">
-      <div class="cat-card" onclick="window.location.href='courses.html'">
+      <div class="cat-card" onclick="window.location.href='courses.html?group=cot-loi'">
         <div class="cat-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
             <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -494,7 +658,7 @@ section{padding:64px 0}
         <h3>Phát triển năng lực cốt lõi</h3>
         <p class="cat-count"><b>8</b> khóa học</p>
       </div>
-      <div class="cat-card" onclick="window.location.href='courses.html'">
+      <div class="cat-card" onclick="window.location.href='courses.html?group=chuyen-mon'">
         <div class="cat-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
             <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -508,7 +672,7 @@ section{padding:64px 0}
         <h3>Phát triển năng lực chuyên môn</h3>
         <p class="cat-count"><b>6</b> khóa học</p>
       </div>
-      <div class="cat-card" onclick="window.location.href='courses.html'">
+      <div class="cat-card" onclick="window.location.href='courses.html?group=lanh-dao'">
         <div class="cat-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
             <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -525,7 +689,7 @@ section{padding:64px 0}
         <h3>Phát triển năng lực lãnh đạo</h3>
         <p class="cat-count"><b>5</b> khóa học</p>
       </div>
-      <div class="cat-card" onclick="window.location.href='courses.html'">
+      <div class="cat-card" onclick="window.location.href='courses.html?group=ky-nang-mem'">
         <div class="cat-icon">
           <svg viewBox="0 0 64 64" aria-hidden="true">
             <g stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -539,6 +703,14 @@ section{padding:64px 0}
         <h3>Phát triển kỹ năng mềm</h3>
         <p class="cat-count"><b>4</b> khóa học</p>
       </div>
+    </div>
+    <div style="text-align:center; margin-top:28px;">
+      <button onclick="window.location.href='courses.html'"
+        style="background:#F5C518; color:#1A1A1A; border:none; padding:14px 36px; border-radius:50px; font-size:15px; font-weight:700; cursor:pointer; transition:all 0.2s ease;"
+        onmouseover="this.style.background='#E0B015'; this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.background='#F5C518'; this.style.transform='translateY(0)'">
+        Xem tất cả khóa học →
+      </button>
     </div>
   </div>
 </section>
@@ -637,6 +809,25 @@ section{padding:64px 0}
   </div>
 </section>
 
+<!-- ============ BANNER THƯ VIỆN EBOOK ============ -->
+<section style="padding:40px 0;">
+  <div class="container">
+    <div style="background:linear-gradient(135deg,#1A1A2E 0%,#16213E 100%);border-radius:16px;padding:32px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:13px;color:#F5C518;font-weight:600;margin-bottom:8px;letter-spacing:1px;">THƯ VIỆN TÀI LIỆU</div>
+        <h3 style="color:#FFFFFF;font-size:22px;font-weight:700;margin:0 0 8px 0;">📚 Khám phá Thư viện Ebook</h3>
+        <p style="color:#9A9A9A;font-size:14px;margin:0;max-width:480px;">Tài liệu được tuyển chọn bởi đội ngũ AMELA — từ kỹ năng chuyên môn đến phát triển bản thân.</p>
+      </div>
+      <button onclick="window.location.href='ebook-library.html'"
+        style="background:#F5C518;color:#1A1A1A;border:none;padding:14px 32px;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all 0.2s ease;"
+        onmouseover="this.style.background='#E0B015';this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.background='#F5C518';this.style.transform='translateY(0)'">
+        Vào thư viện →
+      </button>
+    </div>
+  </div>
+</section>
+
 <!-- ============ 6. FOOTER ============ -->
 <footer class="footer">
   <div class="container">
@@ -646,6 +837,65 @@ section{padding:64px 0}
 </footer>
 
 <script>
+// ===== Render bảng xếp hạng (áp dụng formatDisplayName + kích thước giảm dần) =====
+(function(){
+  var row = document.getElementById('lbRow');
+  if(!row) return;
+  var LEADERBOARD = [
+    { name:"Nguyễn Văn An", points:1250 },
+    { name:"Trần Thị Bình", points:1180 },
+    { name:"Lê Hoàng Nam",  points:1050 },
+    { name:"Phạm Thu Hà",   points:980  },
+    { name:"Võ Minh Tuấn",  points:920  }
+  ];
+  var MEDALS = ['🥇','🥈','🥉'];
+  function esc(s){ return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+  function initial(n){ var f = formatDisplayName(n).trim(); return (f.charAt(0)||'?').toUpperCase(); }
+  row.innerHTML = LEADERBOARD.map(function(m,i){
+    var rank = i+1;
+    var badge = i<3 ? '<div class="lb-rank">'+MEDALS[i]+'</div>'
+                    : '<div class="lb-rank num">'+rank+'</div>';
+    return '<div class="lb-card lb-r'+rank+'">'+badge
+         + '<div class="lb-av">'+initial(m.name)+'</div>'
+         + '<div class="lb-name">'+esc(formatDisplayName(m.name))+'</div>'
+         + '<div class="lb-pts">⭐ '+m.points+' pts</div></div>';
+  }).join('');
+})();
+
+// ===== Pháo giấy (Phương án B). Tự tắt nếu đang dùng Phương án A (canvas display:none) =====
+(function(){
+  var cv = document.getElementById('confetti');
+  if(!cv) return;
+  if(getComputedStyle(cv).display === 'none') return; // Phương án A -> không chạy
+  var sec = cv.parentElement, ctx = cv.getContext('2d');
+  var COLORS = ['#F5C518','#FF6B6B','#4ECDC4','#45B7D1','#96CEB4','#FFEAA7'];
+  var parts = [];
+  function resize(){ cv.width = sec.offsetWidth; cv.height = sec.offsetHeight; }
+  resize(); window.addEventListener('resize', resize);
+  for(var i=0;i<50;i++){
+    parts.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:4+Math.random()*5, c:COLORS[(Math.random()*COLORS.length)|0],
+      vy:0.35+Math.random()*0.75, ang:Math.random()*6.28,
+      va:(Math.random()-0.5)*0.05, sway:0.2+Math.random()*0.5, t:Math.random()*100
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    for(var i=0;i<parts.length;i++){
+      var p=parts[i];
+      p.t+=0.02; p.y+=p.vy; p.x+=Math.sin(p.t)*p.sway; p.ang+=p.va;
+      if(p.y > cv.height+12){ p.y=-12; p.x=Math.random()*cv.width; }
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.ang);
+      ctx.globalAlpha=0.85; ctx.fillStyle=p.c;
+      ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
+      ctx.restore();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
 // Tạo nền sao lấp lánh cho Hero
 (function(){
   var box = document.getElementById('stars');
@@ -670,17 +920,13 @@ section{padding:64px 0}
 // Animation progress bar khi trang load
 window.addEventListener('load', function(){
   setTimeout(function(){
-    document.querySelectorAll('.progress-fill').forEach(function(bar){
+    document.querySelectorAll('.mc-fill').forEach(function(bar){
       bar.style.width = bar.getAttribute('data-progress') + '%';
     });
   }, 250);
 });
 
-// Demo: nút đăng xuất
-document.querySelector('.btn-logout').addEventListener('click', function(){
-  localStorage.removeItem('lms_user');
-  window.location.href = 'login.html';
-});
+// Đăng xuất đã được xử lý bằng Firebase signOut ở script type="module" phía trên
 
 // Mũi tên cuộn ngang cho gallery & phản hồi
 document.querySelectorAll('.scroll-arrow').forEach(function(btn){
@@ -698,37 +944,30 @@ document.querySelectorAll('.scroll-arrow').forEach(function(btn){
   setTimeout(update, 120);
 });
 
-// Tìm kiếm khóa học theo tên hoặc nhóm năng lực
-(function(){
-  var input = document.getElementById('courseSearch');
-  var sel   = document.getElementById('groupFilter');
-  var btn   = document.getElementById('searchBtn');
-  var empty = document.getElementById('searchEmpty');
-  if(!input) return;
-  var cards = Array.prototype.slice.call(document.querySelectorAll('.course-card'));
-  function norm(s){return (s||'').toLowerCase();}
-  function run(){
-    var q = norm(input.value).trim();
-    var g = sel.value;
-    var shown = 0;
-    cards.forEach(function(c){
-      var h3 = c.querySelector('h3');
-      var badge = c.querySelector('.dept-badge');
-      var name = norm(h3 ? h3.textContent : '');
-      var dept = norm(badge ? badge.textContent : '');
-      var matchText  = !q || name.indexOf(q) > -1 || dept.indexOf(q) > -1;
-      var matchGroup = !g || c.getAttribute('data-group') === g;
-      var ok = matchText && matchGroup;
-      c.style.display = ok ? '' : 'none';
-      if(ok) shown++;
-    });
-    if(empty) empty.hidden = (shown !== 0);
+// Tìm kiếm trên trang chủ -> chuyển sang courses.html kèm từ khóa + nhóm năng lực
+function handleSearch(){
+  var keyword = document.querySelector('input[type="text"], .search-input, input[placeholder*="tìm"], input[placeholder*="Tìm"]');
+  var keywordVal = keyword ? keyword.value.trim() : '';
+
+  var groupSelect = document.querySelector('select, .search-select');
+  var groupVal = groupSelect ? groupSelect.value.trim() : '';
+
+  var params = [];
+  if(keywordVal){ params.push('search=' + encodeURIComponent(keywordVal)); }
+  if(groupVal && groupVal !== '' && groupVal !== 'all' && groupVal !== 'Tất cả'){
+    var groupMap = {
+      'Năng lực cốt lõi':    'cot-loi',
+      'Năng lực chuyên môn': 'chuyen-mon',
+      'Năng lực lãnh đạo':   'lanh-dao',
+      'Kỹ năng mềm':         'ky-nang-mem'
+    };
+    var slug = groupMap[groupVal] || groupVal;
+    params.push('group=' + encodeURIComponent(slug));
   }
-  input.addEventListener('input', run);
-  sel.addEventListener('change', run);
-  btn.addEventListener('click', run);
-  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') run(); });
-})();
+  var url = 'courses.html';
+  if(params.length > 0){ url += '?' + params.join('&'); }
+  window.location.href = url;
+}
 </script>
 
 </body>

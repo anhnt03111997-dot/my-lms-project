@@ -4,12 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Đăng nhập — AMELA LMS</title>
-<script>
-// Nếu đã đăng nhập -> vào thẳng index.html
-(function(){
-  try{ if(localStorage.getItem('lms_user')){ window.location.href = 'index.html'; } }catch(e){}
-})();
-</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
 
@@ -71,6 +65,11 @@ form{text-align:left}
   transition:all .2s ease;margin-top:4px;
 }
 .btn-login:hover{background:#e3b500;transform:translateY(-2px);box-shadow:0 10px 24px rgba(245,197,24,.4)}
+.btn-login:disabled{opacity:.7;cursor:not-allowed;transform:none;box-shadow:none}
+
+.forgot-row{text-align:right;margin:-6px 0 16px}
+.forgot-link{font-size:13px;color:var(--muted);text-decoration:none;cursor:pointer}
+.forgot-link:hover{color:#c9a200;text-decoration:underline}
 
 @media(max-width:440px){
   .login-card{padding:32px 22px;border-radius:16px}
@@ -87,7 +86,7 @@ form{text-align:left}
   <p class="subtitle">Đăng nhập để tiếp tục học</p>
 
   <form id="loginForm" novalidate>
-    <div class="error-msg" id="errorMsg"></div>
+    <div class="error-msg" id="error-message"></div>
 
     <div class="field">
       <label for="email">Email</label>
@@ -105,67 +104,157 @@ form{text-align:left}
       </div>
     </div>
 
-    <button type="submit" class="btn-login">Đăng nhập</button>
+    <div class="forgot-row"><a href="#" class="forgot-link" id="forgot-btn">Quên mật khẩu?</a></div>
+
+    <button type="submit" class="btn-login" id="login-btn">Đăng nhập</button>
   </form>
 </div>
 
-<script>
-// ====== 3 tài khoản hardcode ======
-const USERS = [
-  { email:"admin@amela.vn",    password:"admin123",   name:"Admin AMELA",    role:"admin" },
-  { email:"teacher@amela.vn",  password:"teacher123", name:"Giảng viên",     role:"teacher" },
-  { email:"nhanvien@amela.vn", password:"nv1234",      name:"Nguyễn Văn A",   role:"employee" }
-];
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-const form    = document.getElementById('loginForm');
-const emailEl  = document.getElementById('email');
-const pwEl     = document.getElementById('password');
-const errorEl  = document.getElementById('errorMsg');
-const toggle   = document.getElementById('togglePw');
-const eyeIcon  = document.getElementById('eyeIcon');
+const firebaseConfig = {
+  apiKey: "AIzaSyDx85zsy3UfYyjV9raZLY0knwIwho8UhLg",
+  authDomain: "amela-lms.firebaseapp.com",
+  projectId: "amela-lms",
+  storageBucket: "amela-lms.firebasestorage.app",
+  messagingSenderId: "833013103244",
+  appId: "1:833013103244:web:80ea9e14f887b50e4bd9a9"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-// Hiện/ẩn mật khẩu
-var EYE_OPEN  = '<g fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></g>';
-var EYE_OFF   = '<g fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7c1.7 0 3.2.5 4.5 1.2M22 12s-3.6 7-10 7c-1.7 0-3.2-.5-4.5-1.2"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><line x1="3" y1="3" x2="21" y2="21"/></g>';
-toggle.addEventListener('click', function(){
-  var show = pwEl.type === 'password';
-  pwEl.type = show ? 'text' : 'password';
-  eyeIcon.innerHTML = show ? EYE_OFF : EYE_OPEN;
-});
+// Cờ chống redirect ngay khi vừa đăng xuất
+let isLoggingOut = false;
 
-function showError(msg){ errorEl.textContent = msg; errorEl.classList.add('show'); }
-function clearError(){ errorEl.textContent = ''; errorEl.classList.remove('show'); }
-
-function handleLogin(){
-  clearError();
-  var email = emailEl.value.trim();
-  var pw     = pwEl.value;
-  var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  // Bước 1 — Validate
-  if(!email){               showError('Vui lòng nhập email'); return; }
-  if(!emailRe.test(email)){ showError('Email không đúng định dạng'); return; }
-  if(!pw){                  showError('Vui lòng nhập mật khẩu'); return; }
-  if(pw.length < 6){        showError('Mật khẩu tối thiểu 6 ký tự'); return; }
-
-  // Bước 2 — Kiểm tra tài khoản
-  var user = USERS.find(function(u){ return u.email.toLowerCase() === email.toLowerCase(); });
-  if(!user){                showError('Email không tồn tại trong hệ thống'); return; }
-  if(user.password !== pw){ showError('Mật khẩu không chính xác'); return; }
-
-  // Bước 3 — Thành công
-  localStorage.setItem('lms_user', JSON.stringify({
-    email: user.email,
-    name:  user.name,
-    role:  user.role
-  }));
-  window.location.href = 'index.html';
+// Xác định role dựa trên email
+function roleFor(email){
+  if(email === 'admin@amela.vn') return 'admin';
+  if(email === 'teacher@amela.vn') return 'teacher';
+  return 'employee';
 }
 
-form.addEventListener('submit', function(e){ e.preventDefault(); handleLogin(); });
-// gõ lại thì xóa thông báo lỗi
-emailEl.addEventListener('input', clearError);
-pwEl.addEventListener('input', clearError);
+// Nếu phiên Firebase còn -> khôi phục localStorage và vào thẳng trang chủ
+onAuthStateChanged(auth, function(user){
+  if(isLoggingOut) return;
+  if(user){
+    const email = user.email || '';
+    localStorage.setItem('lms_user', JSON.stringify({
+      uid: user.uid,
+      email: email,
+      name: user.displayName || email.split('@')[0],
+      role: roleFor(email)
+    }));
+    window.location.href = 'index.html';
+  }
+});
+
+// ===== Thông báo =====
+function showError(msg){
+  const el = document.getElementById('error-message');
+  if(!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = '';   // trả về màu đỏ mặc định từ CSS
+  el.style.color = '';
+  el.style.borderColor = '';
+}
+function showSuccess(msg){
+  const el = document.getElementById('error-message');
+  if(!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = '#F0FDF4';
+  el.style.color = '#16A34A';
+  el.style.borderColor = '#86EFAC';
+}
+function clearMsg(){
+  const el = document.getElementById('error-message');
+  if(el) el.style.display = 'none';
+}
+
+// ===== Hiện/ẩn mật khẩu (giữ nguyên hành vi) =====
+const pwEl = document.getElementById('password');
+const toggle = document.getElementById('togglePw');
+const eyeIcon = document.getElementById('eyeIcon');
+const EYE_OPEN = '<g fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></g>';
+const EYE_OFF = '<g fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7c1.7 0 3.2.5 4.5 1.2M22 12s-3.6 7-10 7c-1.7 0-3.2-.5-4.5-1.2"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><line x1="3" y1="3" x2="21" y2="21"/></g>';
+if(toggle){
+  toggle.addEventListener('click', function(){
+    const show = pwEl.type === 'password';
+    pwEl.type = show ? 'text' : 'password';
+    eyeIcon.innerHTML = show ? EYE_OFF : EYE_OPEN;
+  });
+}
+
+// ===== Đăng nhập (Firebase) =====
+async function handleLogin(){
+  clearMsg();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  if(!email){ showError('Vui lòng nhập email'); return; }
+  if(!password){ showError('Vui lòng nhập mật khẩu'); return; }
+
+  const btn = document.getElementById('login-btn');
+  const btnText = btn.textContent;
+  btn.textContent = 'Đang đăng nhập...';
+  btn.disabled = true;
+
+  try{
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    const role = roleFor(email);
+
+    localStorage.setItem('lms_user', JSON.stringify({
+      uid: user.uid,
+      email: user.email,
+      name: user.displayName || email.split('@')[0],
+      role: role
+    }));
+
+    window.location.href = 'index.html';
+  }catch(error){
+    btn.textContent = btnText;
+    btn.disabled = false;
+    switch(error.code){
+      case 'auth/user-not-found':
+        showError('Email không tồn tại trong hệ thống'); break;
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+        showError('Mật khẩu không chính xác'); break;
+      case 'auth/invalid-email':
+        showError('Email không đúng định dạng'); break;
+      case 'auth/too-many-requests':
+        showError('Đăng nhập thất bại quá nhiều lần. Vui lòng thử lại sau'); break;
+      default:
+        showError('Đăng nhập thất bại: ' + error.message);
+    }
+  }
+}
+
+// ===== Quên mật khẩu =====
+async function handleForgotPassword(){
+  const email = document.getElementById('email').value.trim();
+  if(!email){ showError('Nhập email trước để lấy lại mật khẩu'); return; }
+  try{
+    await sendPasswordResetEmail(auth, email);
+    showSuccess('✅ Email đặt lại mật khẩu đã được gửi. Kiểm tra hộp thư của bạn.');
+  }catch(error){
+    showError('Không thể gửi email. Kiểm tra lại địa chỉ.');
+  }
+}
+
+// ===== Gắn sự kiện (không dùng onclick trong HTML) =====
+const form = document.getElementById('loginForm');
+if(form){ form.addEventListener('submit', function(e){ e.preventDefault(); handleLogin(); }); }
+
+const forgotBtn = document.getElementById('forgot-btn');
+if(forgotBtn){ forgotBtn.addEventListener('click', function(e){ e.preventDefault(); handleForgotPassword(); }); }
+
+document.getElementById('email').addEventListener('input', clearMsg);
+document.getElementById('password').addEventListener('input', clearMsg);
 </script>
 
 </body>
