@@ -147,27 +147,19 @@ body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);
 }
 @media(max-width:480px){.ebook-grid{grid-template-columns:1fr 1fr;gap:14px}}
 </style>
+<script src="auth-role.js"></script>
 </head>
 <body>
+<!-- Phân quyền 3 cấp + bảo vệ trang (auth-role.js) -->
 <script>
-// ===== Auth + hiển thị nút admin theo vai trò =====
-(function(){
-  var raw = localStorage.getItem('lms_user');
-  if(!raw){ window.location.href='login.html'; return; }
-  try{
-    var u = JSON.parse(raw);
-    document.addEventListener('DOMContentLoaded', function(){
-      var greet = document.querySelector('.greeting');
-      if(greet && u.name) greet.innerHTML = 'Xin chào, <b>' + u.name + '</b>';
-      var av = document.querySelector('.nav-right .avatar');
-      if(av && u.name) av.textContent = u.name.charAt(0).toUpperCase();
-      var adminBtn = document.getElementById('admin-panel-btn');
-      if(adminBtn){
-        adminBtn.style.display = (u.role==='admin' || u.role==='teacher') ? 'flex' : 'none';
-      }
-    });
-  }catch(e){}
-})();
+  document.addEventListener('DOMContentLoaded', function(){
+    applyRolePermissions();
+    // Nút quản lý ebook: cả admin và teacher đều thấy
+    var adminBtn = document.getElementById('admin-panel-btn');
+    if(adminBtn){
+      adminBtn.style.display = isTeacher() ? 'flex' : 'none';
+    }
+  });
 </script>
 
 <!-- ===== NAVBAR ===== -->
@@ -185,7 +177,7 @@ body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);
     <div class="nav-right">
       <div class="avatar">NV</div>
       <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
-      <button class="btn-logout">Đăng xuất</button>
+      <button class="btn-logout" onclick="handleLogout()">Đăng xuất</button>
     </div>
   </div>
 </nav>
@@ -595,11 +587,7 @@ function toast(msg, isErr){
   toastTimer = setTimeout(function(){ t.className='toast'+(isErr?' err':''); }, 3000);
 }
 
-/* ===== ĐĂNG XUẤT ===== */
-document.querySelector('.btn-logout').addEventListener('click', function(){
-  localStorage.removeItem('lms_user');
-  window.location.href = 'login.html';
-});
+/* ===== ĐĂNG XUẤT (auth-role.js qua onclick="handleLogout()") ===== */
 </script>
 </body>
 </html>

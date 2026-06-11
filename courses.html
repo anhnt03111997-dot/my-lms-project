@@ -174,22 +174,12 @@ body{
   .page-header{padding:40px 0 46px}
 }
 </style>
+<script src="auth-role.js"></script>
 </head>
 <body>
+<!-- Phân quyền 3 cấp + bảo vệ trang (auth-role.js) -->
 <script>
-(function(){
-  var user = localStorage.getItem('lms_user');
-  if(!user){ window.location.href = 'login.html'; return; }
-  try {
-    var u = JSON.parse(user);
-    document.addEventListener('DOMContentLoaded', function(){
-      var greet = document.querySelector('.greeting');
-      if(greet && u.name){ greet.innerHTML = 'Xin chào, <b>' + u.name + '</b>'; }
-      var av = document.querySelector('.avatar');
-      if(av && u.name){ av.textContent = u.name.charAt(0).toUpperCase(); }
-    });
-  } catch(e){}
-})();
+  document.addEventListener('DOMContentLoaded', applyRolePermissions);
 </script>
 
 <!-- ============ 1. NAVBAR ============ -->
@@ -210,7 +200,7 @@ body{
     <div class="nav-right">
       <div class="avatar">NV</div>
       <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
-      <button class="btn-logout">Đăng xuất</button>
+      <button class="btn-logout" onclick="handleLogout()">Đăng xuất</button>
     </div>
   </div>
 </nav>
@@ -225,6 +215,14 @@ body{
     <p>Tìm kiếm khóa học theo tên</p>
   </div>
 </header>
+
+<!-- Nút dành cho Giảng viên/Admin -->
+<div class="container" data-role-teacher style="display:none;text-align:right;margin:16px auto 0;">
+  <button style="background:#F5C518;color:#1A1A1A;border:none;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer;"
+    onclick="alert('Tính năng thêm khóa học — sẽ hoàn thiện ở giai đoạn tiếp theo')">
+    ➕ Thêm khóa học mới
+  </button>
+</div>
 
 <!-- ============ 3. TÌM KIẾM & BỘ LỌC ============ -->
 <section class="filter-section">
@@ -425,11 +423,7 @@ clearBtn.addEventListener('click', clearFilters);
   }
 })();
 
-// Đăng xuất: xóa phiên và quay về trang đăng nhập
-document.querySelector('.btn-logout').addEventListener('click', function(){
-  localStorage.removeItem('lms_user');
-  window.location.href = 'login.html';
-});
+// Đăng xuất do auth-role.js xử lý qua onclick="handleLogout()"
 </script>
 
 <!-- Để kết nối: trong index.html, tìm nút "Khám phá khóa học" và đổi href thành "courses.html" -->

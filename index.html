@@ -457,6 +457,8 @@ section{padding:64px 0}
   .cat-icon svg{width:48px;height:48px}
 }
 </style>
+<script src="auth-role.js"></script>
+<script type="module" src="firestore-progress.js"></script>
 </head>
 <body>
 <script>
@@ -471,54 +473,9 @@ function formatDisplayName(nameOrEmail){
 }
 </script>
 
-<!-- Bảo vệ trang + đăng xuất bằng Firebase (ES module) -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDx85zsy3UfYyjV9raZLY0knwIwho8UhLg",
-  authDomain: "amela-lms.firebaseapp.com",
-  projectId: "amela-lms",
-  storageBucket: "amela-lms.firebasestorage.app",
-  messagingSenderId: "833013103244",
-  appId: "1:833013103244:web:80ea9e14f887b50e4bd9a9"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// Kiểm tra đăng nhập khi load trang
-onAuthStateChanged(auth, function(user){
-  if(!user){
-    window.location.href = 'login.html';   // chưa đăng nhập -> về login
-  } else {
-    const stored = localStorage.getItem('lms_user');
-    if(stored){
-      try{
-        const u = JSON.parse(stored);
-        const name = (typeof formatDisplayName === 'function') ? formatDisplayName(u.name) : u.name;
-        const greet = document.querySelector('.greeting');
-        if(greet && u.name){ greet.innerHTML = 'Xin chào, <b>' + name + '</b>'; }
-        const av = document.querySelector('.nav-right .avatar');
-        if(av && u.name){ av.textContent = name.charAt(0).toUpperCase(); }
-      }catch(e){}
-    }
-  }
-});
-
-// Đăng xuất thật bằng Firebase signOut
-function handleLogout(){
-  signOut(auth).then(function(){
-    localStorage.removeItem('lms_user');
-    window.location.href = 'login.html';
-  }).catch(function(error){
-    console.error('Lỗi đăng xuất:', error);
-    localStorage.removeItem('lms_user');
-    window.location.href = 'login.html';
-  });
-}
-var logoutBtn = document.querySelector('.btn-logout');
-if(logoutBtn){ logoutBtn.addEventListener('click', handleLogout); }
+<!-- Phân quyền 3 cấp + bảo vệ trang (auth-role.js) -->
+<script>
+  document.addEventListener('DOMContentLoaded', applyRolePermissions);
 </script>
 
 <!-- ============ 1. NAVBAR ============ -->
@@ -539,7 +496,7 @@ if(logoutBtn){ logoutBtn.addEventListener('click', handleLogout); }
     <div class="nav-right">
       <div class="avatar">NV</div>
       <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
-      <button class="btn-logout">Đăng xuất</button>
+      <button class="btn-logout" onclick="handleLogout()">Đăng xuất</button>
     </div>
   </div>
 </nav>
@@ -924,6 +881,23 @@ window.addEventListener('load', function(){
       bar.style.width = bar.getAttribute('data-progress') + '%';
     });
   }, 250);
+
+  // Cập nhật % thật từ Firestore/localStorage cho các khóa có data-course-id khớp
+  if(window.firestoreProgress){
+    window.firestoreProgress.getAllProgress().then(function(all){
+      if(!all) return;
+      document.querySelectorAll('.my-course').forEach(function(card){
+        var id = card.getAttribute('data-course-id');
+        var p = id && all[id];
+        if(p && typeof p.totalProgress === 'number'){
+          var fill = card.querySelector('.mc-fill');
+          var pct = card.querySelector('.mc-pct');
+          if(fill){ fill.setAttribute('data-progress', p.totalProgress); fill.style.width = p.totalProgress + '%'; }
+          if(pct){ pct.textContent = p.totalProgress + '%'; }
+        }
+      });
+    }).catch(function(e){ console.warn(e); });
+  }
 });
 
 // Đăng xuất đã được xử lý bằng Firebase signOut ở script type="module" phía trên

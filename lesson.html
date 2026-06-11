@@ -172,23 +172,13 @@ body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);
   .greeting{display:none}
 }
 </style>
+<script src="auth-role.js"></script>
+<script type="module" src="firestore-progress.js"></script>
 </head>
 <body>
+<!-- Phân quyền 3 cấp + bảo vệ trang (auth-role.js) -->
 <script>
-// ===== Auth =====
-(function(){
-  var raw = localStorage.getItem('lms_user');
-  if(!raw){ window.location.href='login.html'; return; }
-  try{
-    var u = JSON.parse(raw);
-    document.addEventListener('DOMContentLoaded', function(){
-      var greet=document.querySelector('.greeting');
-      if(greet&&u.name) greet.innerHTML='Xin chào, <b>'+u.name+'</b>';
-      var av=document.querySelector('.nav-right .avatar');
-      if(av&&u.name) av.textContent=u.name.charAt(0).toUpperCase();
-    });
-  }catch(e){}
-})();
+  document.addEventListener('DOMContentLoaded', applyRolePermissions);
 </script>
 
 <!-- ===== NAVBAR ===== -->
@@ -205,7 +195,7 @@ body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);
     <div class="nav-right">
       <div class="avatar">NV</div>
       <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
-      <button class="btn-logout">Đăng xuất</button>
+      <button class="btn-logout" onclick="handleLogout()">Đăng xuất</button>
     </div>
   </div>
 </nav>
@@ -226,6 +216,11 @@ body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);
   <main class="learn">
     <div class="mobile-select">
       <select id="mobileSelect"></select>
+    </div>
+
+    <!-- Nút dành cho Giảng viên/Admin -->
+    <div data-role-teacher style="display:none;text-align:right;margin-bottom:12px;">
+      <button style="background:#F5C518;color:#1A1A1A;border:none;padding:8px 16px;border-radius:6px;font-weight:600;cursor:pointer;" onclick="alert('Sửa nội dung bài học')">✏️ Sửa bài học</button>
     </div>
 
     <!-- 3A. Header -->
@@ -461,7 +456,18 @@ function renderQuestion(i){
 }
 function nextLabel(i){ return i>=LESSON.questions.length-1 ? 'Hoàn thành bài' : 'Câu tiếp theo →'; }
 function afterAnswer(i){
-  if(!answered.has(i)){ answered.add(i); cur.answeredQuestions=Array.from(answered); cur.status='doing'; saveProgress(progress); }
+  if(!answered.has(i)){
+    answered.add(i); cur.answeredQuestions=Array.from(answered); cur.status='doing'; saveProgress(progress);
+    // Mirror lên Firestore (fallback localStorage nằm trong firestore-progress.js)
+    if(window.firestoreProgress){
+      console.log('[lesson] Lưu tiến độ (doing):', LESSON.courseId, LESSON.lessonId);
+      window.firestoreProgress.saveLessonProgress(LESSON.courseId, LESSON.lessonId, {
+        status:'doing', answeredQuestions:Array.from(answered)
+      }).catch(function(e){ console.error('[lesson] Lỗi lưu tiến độ (doing):', e); });
+    } else {
+      console.warn('[lesson] window.firestoreProgress chưa sẵn sàng — kiểm tra firestore-progress.js đã nạp chưa');
+    }
+  }
   var act=document.getElementById('qActions')||quizBody.querySelector('.quiz-actions');
   act.innerHTML='<button class="btn-yellow" id="nextQ">'+nextLabel(i)+'</button>';
   document.getElementById('nextQ').addEventListener('click', function(){
@@ -539,6 +545,16 @@ function finishLesson(){
     else if(progress.lessons[nx].status==='locked') progress.lessons[nx].status='doing';
   }
   saveProgress(progress);
+  // Mirror "done" + kết quả quiz lên Firestore (giữ answeredQuestions nên dùng saveLessonProgress)
+  if(window.firestoreProgress){
+    var qScore = LESSON.questions && LESSON.questions.length ? Math.round(answered.size / LESSON.questions.length * 100) : 100;
+    console.log('[lesson] Hoàn thành bài → lưu (done):', LESSON.courseId, LESSON.lessonId, 'score=' + qScore);
+    window.firestoreProgress.saveLessonProgress(LESSON.courseId, LESSON.lessonId, {
+      status:'done', answeredQuestions:Array.from(answered), quizScore:qScore, quizPassed:true
+    }).catch(function(e){ console.error('[lesson] Lỗi lưu tiến độ (done):', e); });
+  } else {
+    console.warn('[lesson] window.firestoreProgress chưa sẵn sàng khi hoàn thành bài');
+  }
   var sb=document.getElementById('statusBadge'); if(sb) sb.textContent='Hoàn thành';
   document.getElementById('btnNext').disabled=false;
   renderSidebar();
@@ -580,10 +596,7 @@ function showToast(msg){
   toastTimer=setTimeout(function(){ toast.classList.remove('show'); },3000);
 }
 
-/* ====== ĐĂNG XUẤT ====== */
-document.querySelector('.btn-logout').addEventListener('click',function(){
-  localStorage.removeItem('lms_user'); window.location.href='login.html';
-});
+/* ====== ĐĂNG XUẤT (auth-role.js qua onclick="handleLogout()") ====== */
 </script>
 </body>
 </html>

@@ -113,6 +113,7 @@ form{text-align:left}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDx85zsy3UfYyjV9raZLY0knwIwho8UhLg",
@@ -124,6 +125,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 // Cờ chống redirect ngay khi vừa đăng xuất
 let isLoggingOut = false;
@@ -205,16 +207,42 @@ async function handleLogin(){
   try{
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-    const role = roleFor(email);
 
-    localStorage.setItem('lms_user', JSON.stringify({
-      uid: user.uid,
-      email: user.email,
-      name: user.displayName || email.split('@')[0],
-      role: role
-    }));
+    try {
+      // Tìm document trong collection "users" theo email
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('email', '==', email));
+      const querySnapshot = await getDocs(q);
 
-    window.location.href = 'index.html';
+      let userData = {
+        uid: user.uid,
+        email: user.email,
+        name: email.split('@')[0],
+        role: 'employee'
+      };
+      if(!querySnapshot.empty){
+        const doc = querySnapshot.docs[0];
+        const data = doc.data();
+        userData = {
+          uid: user.uid,
+          email: user.email,
+          name: data.name || email.split('@')[0],
+          role: data.role || 'employee'
+        };
+      }
+      localStorage.setItem('lms_user', JSON.stringify(userData));
+      window.location.href = 'index.html';
+    } catch(firestoreError) {
+      // Firestore lỗi -> vẫn cho vào với role mặc định employee
+      console.warn('Firestore error:', firestoreError);
+      localStorage.setItem('lms_user', JSON.stringify({
+        uid: user.uid,
+        email: user.email,
+        name: email.split('@')[0],
+        role: 'employee'
+      }));
+      window.location.href = 'index.html';
+    }
   }catch(error){
     btn.textContent = btnText;
     btn.disabled = false;

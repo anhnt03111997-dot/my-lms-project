@@ -146,23 +146,13 @@ body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);
   .toast{left:16px;right:16px;bottom:16px}
 }
 </style>
+<script src="auth-role.js"></script>
+<script type="module" src="firestore-progress.js"></script>
 </head>
 <body>
+<!-- Phân quyền 3 cấp + bảo vệ trang (auth-role.js) -->
 <script>
-// ===== Auth: chưa đăng nhập -> login.html =====
-(function(){
-  var raw = localStorage.getItem('lms_user');
-  if(!raw){ window.location.href='login.html'; return; }
-  try{
-    var u = JSON.parse(raw);
-    document.addEventListener('DOMContentLoaded', function(){
-      var greet = document.querySelector('.greeting');
-      if(greet && u.name) greet.innerHTML='Xin chào, <b>'+u.name+'</b>';
-      var av = document.querySelector('.nav-right .avatar');
-      if(av && u.name) av.textContent=u.name.charAt(0).toUpperCase();
-    });
-  }catch(e){}
-})();
+  document.addEventListener('DOMContentLoaded', applyRolePermissions);
 </script>
 
 <!-- ===== NAVBAR ===== -->
@@ -179,7 +169,7 @@ body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);
     <div class="nav-right">
       <div class="avatar">NV</div>
       <span class="greeting">Xin chào, <b>[TÊN NGƯỜI DÙNG]</b></span>
-      <button class="btn-logout">Đăng xuất</button>
+      <button class="btn-logout" onclick="handleLogout()">Đăng xuất</button>
     </div>
   </div>
 </nav>
@@ -191,6 +181,12 @@ body{font-family:'Roboto',sans-serif;background:var(--white);color:var(--black);
       <a href="index.html">Trang chủ</a><span class="sep">&rsaquo;</span><a href="courses.html">Khóa học</a><span class="sep">&rsaquo;</span><span class="here" id="crumbCourse">—</span>
     </nav>
   </div>
+</div>
+
+<!-- Nút dành cho Giảng viên/Admin -->
+<div class="container" data-role-teacher style="display:none;margin-top:16px;">
+  <button style="background:#F5C518;color:#1A1A1A;border:none;padding:8px 16px;border-radius:6px;font-weight:600;cursor:pointer;margin-right:8px;" onclick="alert('Sửa khóa học')">✏️ Sửa khóa học</button>
+  <button style="background:#EF4444;color:white;border:none;padding:8px 16px;border-radius:6px;font-weight:600;cursor:pointer;" onclick="alert('Ẩn khóa học')">🚫 Ẩn khóa học</button>
 </div>
 
 <!-- ===== NỘI DUNG 2 CỘT ===== -->
@@ -435,11 +431,7 @@ document.getElementById('ctaBtn').addEventListener('click', function(){
   if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.transition='background .2s'; }
 });
 
-// Đăng xuất
-document.querySelector('.btn-logout').addEventListener('click', function(){
-  localStorage.removeItem('lms_user');
-  window.location.href = 'login.html';
-});
+// Đăng xuất do auth-role.js xử lý qua onclick="handleLogout()"
 
 // Animation progress bar khi load
 window.addEventListener('load', function(){
@@ -447,6 +439,19 @@ window.addEventListener('load', function(){
     var f = document.getElementById('barFill');
     if(f) f.style.width = f.getAttribute('data-progress') + '%';
   }, 250);
+
+  // Đọc tiến độ thật từ Firestore (ghi đè % nếu có dữ liệu)
+  if(window.firestoreProgress){
+    var courseId = slug || 'a-core';
+    window.firestoreProgress.getCourseProgress(courseId).then(function(p){
+      if(!p || typeof p.totalProgress !== 'number') return;
+      var percent = p.totalProgress;
+      var f = document.getElementById('barFill');
+      if(f){ f.setAttribute('data-progress', percent); f.style.width = percent + '%'; }
+      var label = document.querySelector('.progress-label');
+      if(label){ label.innerHTML = 'Tiến độ: <b>' + percent + '%</b>'; }
+    }).catch(function(e){ console.warn(e); });
+  }
 });
 </script>
 
